@@ -1,22 +1,41 @@
 # Aether
 
-**Shield once. Stay private for the whole lifecycle.**
+**Shielded isn't private.**
 
-Aether is a continuous private portfolio and strategy engine that runs entirely
-inside the [STRK20](https://strk20-by-example.org) privacy pool on Starknet
-mainnet. You shield once; from then on every action — swaps, lending,
-rebalancing, DCA — happens *inside* the shielded environment, and each one is
-chosen to maximise your **effective anonymity under repeated use**.
+A privacy pool gives you an anonymity *set*. Your behaviour spends it.
 
-Built for the STRK20 Private Sprint.
+Aether runs the real deanonymization attacks — amount correlation, timing
+windows, round numbers, cadence, thin anonymity sets — against your actual
+public footprint on Starknet mainnet, scores how linkable you are, and then
+closes each leak it finds through the live [STRK20](https://strk20-by-example.org)
+pool. Attack, remedy, execute, re-attack.
+
+Built for the STRK20 Private Sprint. Live at
+**[aether-strk20.vercel.app](https://aether-strk20.vercel.app)** — the exposure
+analysis needs no wallet, so you can point it at any address right now.
 
 ---
 
 ## The problem Aether exists to solve
 
-Most privacy tooling treats the shielded pool as a stop on the way somewhere
-else. Value goes in, waits, and comes out — and the moment it comes out and
-touches a public protocol, the link is re-formed.
+The privacy stack has three layers. **Cryptographic hiding** — commitments,
+nullifiers, proofs — is solved, and chains build it themselves; STRK20 *is*
+that layer. **Protocol metadata** — relayers, stealth accounts, gas privacy —
+is being solved, also by chains. The third layer is **statistical privacy: the
+sequence of what you do**, and nobody owns it, because it isn't a protocol
+primitive. It is opinionated, user-side discipline. It is an application.
+
+That third layer is where deanonymization actually happens. Deposits and
+withdrawals are public — only the *link* between them is hidden. Attacks
+re-forge that link without touching the cryptography: a withdrawal that matches
+a deposit to within a fraction of a percent, an exit twenty minutes after an
+entry, a round 1,000, the same hour every week, a denomination tier with four
+other users in it. This is the documented failure mode of every pool that has
+been studied, and no amount of proving strength fixes it.
+
+Most privacy tooling also treats the shielded pool as a stop on the way
+somewhere else. Value goes in, waits, and comes out — and the moment it touches
+a public protocol, the link is re-formed.
 
 ```
 Traditional flow (high leakage)
