@@ -17,23 +17,24 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://aether-strk20.vercel.app'),
   title: {
-    default: 'Aether — private portfolio engine on Starknet',
+    default: 'Aether — shielded isn\u2019t private',
     template: '%s · Aether',
   },
   description:
-    'Shield once. Aether runs continuous private strategies entirely inside the STRK20 pool, sizing and timing every action so your financial behaviour never becomes a fingerprint.',
+    'A privacy pool gives you an anonymity set; your behaviour spends it. Aether runs the real deanonymization attacks against your public footprint on Starknet mainnet, then closes every leak it finds inside the STRK20 pool.',
   keywords: ['Starknet', 'STRK20', 'privacy', 'DeFi', 'zero knowledge', 'private portfolio'],
   authors: [{ name: 'Shariq Shaukat' }],
   openGraph: {
-    title: 'Aether — private portfolio engine on Starknet',
+    title: 'Aether — shielded isn\u2019t private',
     description:
-      'Continuous private strategies that never leave the shielded pool. Live effective-privacy scoring on Starknet mainnet.',
+      'Run the real deanonymization attacks against any Starknet address, then close every leak inside the STRK20 pool. No wallet needed to see how linkable you are.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aether — private portfolio engine on Starknet',
-    description: 'Shield once. Stay private for the whole lifecycle.',
+    title: 'Aether — shielded isn\u2019t private',
+    description:
+      'The pool gives you an anonymity set. Your behaviour spends it. Point the adversary at any address.',
   },
 }
 
