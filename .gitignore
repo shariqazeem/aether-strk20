@@ -56,3 +56,6 @@ skills-lock.json
 
 # keep the template, ignore real env files
 !.env.example
+
+# cairo build output
+contracts/target/

@@ -206,6 +206,29 @@ The pool has **no token allowlist** — its ABI contains no such function, and 3
 different ERC-20s have been shielded through it. Aether's token list is a
 product choice, not a protocol limit.
 
+### Anonymizer contract
+
+`contracts/` holds **AetherSplitter**, a Cairo `privacy_invoke` helper written
+for this repo. It takes one input amount and credits it back as **N non-round
+output notes in a single atomic pool transaction** — the on-chain half of the
+amount-entropy remedy the engine recommends. Splitting across N transactions
+instead costs a 6 STRK pool fee each and leaves a timing trail between the legs
+that re-links the notes the split was meant to decorrelate.
+
+The pool supports it: `${openNoteIds[N]}` is a zero-based index over the open
+notes in one transaction, and `privacy_invoke` returns a `Span<OpenNoteDeposit>`
+— a list, one entry per note. Split proportions are always supplied by the
+caller (the planner's entropy stays reproducible; the contract invents no
+randomness), and the contract asserts on-chain that the outputs sum to exactly
+the input minus any declared fee. Only the pinned pool address may call it.
+
+Draft, unaudited, and **not deployed** — declaring a class on mainnet spends gas
+and is the repo owner's call. `contracts/deploy.sh` prints the exact starkli
+commands without executing them or touching key material. Build with
+`scarb build`, test with `snforge test` (29 tests). Details, the full calldata
+layout, and the honest trade-off against plain in-pool transfers are in
+[`contracts/README.md`](contracts/README.md).
+
 ### Pinned stack
 
 STRK20 support landed in `starknet@10.4.0`. A bare `npm install starknet`
