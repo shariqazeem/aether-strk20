@@ -121,6 +121,123 @@ export function buildPrivateDefi(plan: PrivateDefiPlan): STRK20_ACTION[] {
   return actions
 }
 
+/** Split modes accepted by AetherSplitter's `privacy_invoke`. */
+export const SPLIT_MODE = { EXACT: 0, BPS: 1 } as const
+export type SplitMode = (typeof SPLIT_MODE)[keyof typeof SPLIT_MODE]
+
+export interface SplitPlan {
+  /** Asset being split. Input and outputs are the same token. */
+  token: string
+  /** Total withdrawn to the splitter. */
+  amountIn: bigint
+  /**
+   * EXACT: absolute amounts, which must sum to `amountIn` minus `feeAmount`.
+   * BPS:   basis points summing to 10_000, resolved against the balance the
+   *        splitter actually measures on-chain at execution time.
+   */
+  mode: SplitMode
+  parts: bigint[]
+  takerAddress: string
+  splitterAddress: string
+  feeAmount?: bigint
+  feeRecipient?: string
+}
+
+/**
+ * Split one shielded amount into N notes inside a single pool operation.
+ *
+ * Amount entropy is the strongest remedy the engine has — round and repeated
+ * sizes are what re-link a deposit to a withdrawal — but splitting client-side
+ * costs one pool fee and one timing signal per part. This routes the whole
+ * split through `AetherSplitter.privacy_invoke` instead: one withdrawal, N
+ * open notes, one invoke, and the contract asserts the parts reconcile before
+ * the pool credits anything.
+ *
+ * Open notes carry plaintext amounts, so where the amounts are already known
+ * at proof time, N plain `transfer` actions create encrypted notes and are the
+ * more private choice. Prefer this builder for BPS mode, where the split is
+ * resolved against a balance only the contract can measure.
+ *
+ * Calldata must match the Cairo signature exactly — the pool deserializes it
+ * straight into the function's parameters:
+ *   [mode, token, in_amount, fee_amount, parts_len, ...parts, ids_len, ...ids]
+ */
+export function buildSplit(plan: SplitPlan): STRK20_ACTION[] {
+  if (plan.parts.length === 0) {
+    throw new Error('Refusing to build a split with no parts.')
+  }
+  if (plan.parts.length > 16) {
+    throw new Error(
+      `Refusing to build a ${plan.parts.length}-way split: AetherSplitter caps MAX_SPLITS at 16.`,
+    )
+  }
+
+  const fee = plan.feeAmount ?? 0n
+
+  if (plan.mode === SPLIT_MODE.EXACT) {
+    const sum = plan.parts.reduce((total, part) => total + part, 0n)
+    if (sum !== plan.amountIn - fee) {
+      throw new Error(
+        `Split parts sum to ${sum} but ${plan.amountIn - fee} is available after the fee. ` +
+          'The contract enforces this too; failing here keeps it off-chain and free.',
+      )
+    }
+  } else {
+    const bps = plan.parts.reduce((total, part) => total + part, 0n)
+    if (bps !== 10_000n) {
+      throw new Error(`Basis points must sum to 10000, got ${bps}.`)
+    }
+  }
+
+  const hex = (value: bigint) => `0x${value.toString(16)}`
+
+  const actions: STRK20_ACTION[] = [
+    {
+      type: 'withdraw',
+      token: plan.token,
+      amount: hex(plan.amountIn),
+      recipient: plan.splitterAddress,
+    },
+  ]
+
+  if (fee > 0n && plan.feeRecipient) {
+    actions.push({
+      type: 'withdraw',
+      token: plan.token,
+      amount: hex(fee),
+      recipient: plan.feeRecipient,
+    })
+  }
+
+  // One open note per output. `${openNoteIds[i]}` is zero-indexed over the
+  // transfer actions with amount "OPEN" in this same transaction.
+  for (let index = 0; index < plan.parts.length; index += 1) {
+    actions.push({
+      type: 'transfer',
+      token: plan.token,
+      amount: 'OPEN',
+      recipient: plan.takerAddress,
+    })
+  }
+
+  actions.push({
+    type: 'invoke',
+    contract: plan.splitterAddress,
+    calldata: [
+      hex(BigInt(plan.mode)),
+      plan.token,
+      hex(plan.amountIn),
+      hex(fee),
+      hex(BigInt(plan.parts.length)),
+      ...plan.parts.map(hex),
+      hex(BigInt(plan.parts.length)),
+      ...plan.parts.map((_, index) => openNoteRef(index)),
+    ],
+  })
+
+  return actions
+}
+
 /** An address that value is allowed to be withdrawn to during private DeFi. */
 export interface WithdrawAllowlist {
   /** Deployed helper/executor contracts, plus any fee recipients they declare. */
