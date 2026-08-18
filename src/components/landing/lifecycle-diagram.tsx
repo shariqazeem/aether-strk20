@@ -59,8 +59,8 @@ export function LifecycleDiagram() {
               </span>
             </header>
 
-            <div className="px-6 py-10">
-              <svg viewBox="0 0 720 130" className="w-full" role="img" aria-label="Traditional flow: value leaves the pool and the identity link re-forms">
+            <div className="overflow-x-auto px-6 py-10">
+              <svg viewBox="0 0 720 130" className="w-full min-w-[620px]" role="img" aria-label="Traditional flow: value leaves the pool and the identity link re-forms">
                 <NodeBox x={8} label="Wallet" sub="public" />
                 <NodeBox x={188} label="Shield" sub="private" tone="veil" />
                 <NodeBox x={368} label="Unshield" sub="public again" tone="exposed" />
@@ -115,8 +115,8 @@ export function LifecycleDiagram() {
               </span>
             </header>
 
-            <div className="px-6 py-10">
-              <svg viewBox="0 0 720 150" className="w-full" role="img" aria-label="Aether flow: value stays inside the pool through every action">
+            <div className="overflow-x-auto px-6 py-10">
+              <svg viewBox="0 0 720 150" className="w-full min-w-[620px]" role="img" aria-label="Aether flow: value stays inside the pool through every action">
                 <rect
                   x="150"
                   y="6"

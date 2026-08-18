@@ -98,77 +98,79 @@ export function CompoundingPrivacy() {
                 <span className="font-mono text-[11px] text-ink-faint">modelled</span>
               </div>
 
-              <svg
-                viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-                className="mt-5 w-full"
-                role="img"
-                aria-label="Effective privacy score rising to 86 for a wallet acting on its plan, and falling to 23 for one that shields then goes idle"
-              >
-                {[0, 25, 50, 75, 100].map((tick) => {
-                  const innerH = HEIGHT - PAD.top - PAD.bottom
-                  const y = PAD.top + innerH - (tick / 100) * innerH
-                  return (
-                    <g key={tick}>
-                      <line
-                        x1={PAD.left}
-                        y1={y}
-                        x2={WIDTH - PAD.right}
-                        y2={y}
-                        stroke="var(--color-rule)"
-                        strokeWidth="1"
-                      />
-                      <text
-                        x={PAD.left - 8}
-                        y={y + 3.5}
-                        textAnchor="end"
-                        fontSize="9.5"
-                        className="font-mono"
-                        fill="var(--color-ink-faint)"
-                      >
-                        {tick}
-                      </text>
-                    </g>
-                  )
-                })}
-
-                <path
-                  d={toPath(DORMANT, visible)}
-                  fill="none"
-                  stroke="var(--color-ink-faint)"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray="4 5"
-                />
-                <path
-                  d={toPath(ACTIVE, visible)}
-                  fill="none"
-                  stroke="var(--color-veil)"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-
-                <text
-                  x={PAD.left}
-                  y={HEIGHT - 6}
-                  fontSize="9.5"
-                  className="font-mono"
-                  fill="var(--color-ink-faint)"
+              <div className="mt-5 overflow-x-auto">
+                <svg
+                  viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+                  className="w-full min-w-[440px]"
+                  role="img"
+                  aria-label="Effective privacy score rising to 86 for a wallet acting on its plan, and falling to 23 for one that shields then goes idle"
                 >
-                  day 1
-                </text>
-                <text
-                  x={WIDTH - PAD.right}
-                  y={HEIGHT - 6}
-                  textAnchor="end"
-                  fontSize="9.5"
-                  className="font-mono"
-                  fill="var(--color-ink-faint)"
-                >
-                  day 14
-                </text>
-              </svg>
+                  {[0, 25, 50, 75, 100].map((tick) => {
+                    const innerH = HEIGHT - PAD.top - PAD.bottom
+                    const y = PAD.top + innerH - (tick / 100) * innerH
+                    return (
+                      <g key={tick}>
+                        <line
+                          x1={PAD.left}
+                          y1={y}
+                          x2={WIDTH - PAD.right}
+                          y2={y}
+                          stroke="var(--color-rule)"
+                          strokeWidth="1"
+                        />
+                        <text
+                          x={PAD.left - 8}
+                          y={y + 3.5}
+                          textAnchor="end"
+                          fontSize="9.5"
+                          className="font-mono"
+                          fill="var(--color-ink-faint)"
+                        >
+                          {tick}
+                        </text>
+                      </g>
+                    )
+                  })}
+
+                  <path
+                    d={toPath(DORMANT, visible)}
+                    fill="none"
+                    stroke="var(--color-ink-faint)"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeDasharray="4 5"
+                  />
+                  <path
+                    d={toPath(ACTIVE, visible)}
+                    fill="none"
+                    stroke="var(--color-veil)"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+
+                  <text
+                    x={PAD.left}
+                    y={HEIGHT - 6}
+                    fontSize="9.5"
+                    className="font-mono"
+                    fill="var(--color-ink-faint)"
+                  >
+                    day 1
+                  </text>
+                  <text
+                    x={WIDTH - PAD.right}
+                    y={HEIGHT - 6}
+                    textAnchor="end"
+                    fontSize="9.5"
+                    className="font-mono"
+                    fill="var(--color-ink-faint)"
+                  >
+                    day 14
+                  </text>
+                </svg>
+              </div>
 
               <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-rule pt-4 text-[12px]">
                 <span className="flex items-center gap-2 text-ink-muted">
