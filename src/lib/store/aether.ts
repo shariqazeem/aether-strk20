@@ -23,11 +23,27 @@ interface AetherState {
   strategy: StrategyMode
   privacyFloor: number
 
+  /**
+   * An address being inspected without a wallet.
+   *
+   * The adversary only reads public chain data, so it works on anyone —
+   * including a pasted address. Gating the whole app behind a wallet would
+   * make the headline feature unreachable for most visitors, so exposure
+   * analysis is deliberately open and only the acting surfaces need a wallet.
+   */
+  observerAddress: string | null
+
   connect: (wallet: WalletWithStarknetFeatures) => Promise<void>
   disconnect: () => void
   refreshBalances: () => Promise<void>
   setStrategy: (mode: StrategyMode) => void
   setPrivacyFloor: (floor: number) => void
+  setObserverAddress: (address: string | null) => void
+}
+
+/** The address currently under analysis: the connected wallet, else the pasted one. */
+export function useTargetAddress(): string | null {
+  return useAether((state) => state.address ?? state.observerAddress)
 }
 
 export const useAether = create<AetherState>((set, get) => ({
@@ -43,6 +59,7 @@ export const useAether = create<AetherState>((set, get) => ({
 
   strategy: 'BALANCED',
   privacyFloor: 60,
+  observerAddress: null,
 
   async connect(wallet) {
     set({ status: 'connecting', error: null })
@@ -102,5 +119,9 @@ export const useAether = create<AetherState>((set, get) => ({
 
   setPrivacyFloor(privacyFloor) {
     set({ privacyFloor })
+  },
+
+  setObserverAddress(observerAddress) {
+    set({ observerAddress })
   },
 }))
