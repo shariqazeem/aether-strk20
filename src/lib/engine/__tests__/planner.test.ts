@@ -319,7 +319,7 @@ describe('generatePlan — strategy modes are a weighting', () => {
     }
   })
 
-  it('routes a yield-max plan into the lending venue', () => {
+  it('routes a yield-max plan into the lending venue when lending pays', () => {
     const plan = generatePlan(input({ mode: 'YIELD_MAX' }))
     expect(plan.campaign?.route).toBe('VESU')
     expect(plan.campaign?.type).toBe('LEND')
@@ -327,6 +327,24 @@ describe('generatePlan — strategy modes are a weighting', () => {
       expect(intent.route).toBe('VESU')
       expect(intent.type).toBe('LEND')
     }
+  })
+
+  it('lets the weights, and only the weights, flip the chosen campaign', () => {
+    // Same state, same candidate set, punitive lending cost. The return-weighted
+    // mode abandons the venue; the privacy-weighted mode keeps paying for it
+    // because it still buys the larger privacy delta.
+    const punitive = { routeEconomics: { VESU: { costBps: 2000 } } }
+    const yieldMax = generatePlan(input({ mode: 'YIELD_MAX', ...punitive }))
+    const privacyFirst = generatePlan(input({ mode: 'PRIVACY_FIRST', ...punitive }))
+
+    expect(yieldMax.campaign?.type).toBe('SWAP')
+    expect(privacyFirst.campaign?.type).toBe('LEND')
+    expect(yieldMax.campaign?.netReturnBps).toBeGreaterThan(
+      privacyFirst.campaign?.netReturnBps ?? 0,
+    )
+    expect(privacyFirst.campaign?.privacyDeltaEstimate ?? 0).toBeGreaterThan(
+      yieldMax.campaign?.privacyDeltaEstimate ?? 0,
+    )
   })
 
   it('deploys a larger share under whale distribution than under stealth DCA', () => {

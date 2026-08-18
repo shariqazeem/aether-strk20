@@ -18,22 +18,51 @@ export const POOL_ADDRESS =
   '0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a'
 
 /**
- * Anonymizer class hashes. These are the audited helper classes that expose
- * `privacy_invoke`, letting the pool call out to DeFi and credit the result
- * straight back into an open note.
+ * Anonymizer class hashes — helper classes exposing `privacy_invoke`, which
+ * lets the pool call out to DeFi and credit the result back into an open note.
  *
- * NOTE: these are CLASS hashes, not deployed contract addresses. The deployed
- * instance address for each route is resolved at runtime and must be confirmed
- * before an invoke action is built — see `resolveAnonymizer`.
+ * These are CLASS hashes, not deployed instance addresses. A class must be
+ * declared on mainnet before anything can be deployed from it, so `declared`
+ * records what was actually found on-chain rather than what the docs claim.
+ *
+ * Verified by `starknet_getClassAt` against two independent RPC providers.
  */
-export const ANONYMIZER_CLASS_HASHES = {
-  ekubo: '0x2a4ac595283d4d64b9952f5ef5c0da1775bfdb7c9d92237524a21dd8d19ebd7',
-  vesu: '0x3751128dc3ebd36215f982766f14aaca8f78793e4b0f42a73e49372a8e24aae',
+export const ANONYMIZERS = {
+  ekubo: {
+    classHash: '0x2a4ac595283d4d64b9952f5ef5c0da1775bfdb7c9d92237524a21dd8d19ebd7',
+    // Declared on mainnet; its ABI confirms IEkuboSwapAnonymizer.privacy_invoke.
+    declared: true,
+  },
+  vesu: {
+    classHash: '0x3751128dc3ebd36215f982766f14aaca8f78793e4b0f42a73e49372a8e24aae',
+    // NOT declared on mainnet — `starknet_getClassAt` returns "Class hash not
+    // found" on both providers, padded and unpadded. The hash is not invented;
+    // it is the one published in the starknet-privacy README, but that README
+    // documents a release-candidate tag rather than a mainnet deployment.
+    //
+    // The private-lending route is therefore unavailable on mainnet today, and
+    // the planner must not offer it until this flips. Shipping a lend action
+    // against an undeclared class would fail only at signing time.
+    declared: false,
+  },
 } as const
 
-/** RPC endpoint. Supplied by the operator; never committed. */
+/** Routes that can actually be executed on mainnet right now. */
+export const AVAILABLE_ANONYMIZERS = Object.entries(ANONYMIZERS)
+  .filter(([, meta]) => meta.declared)
+  .map(([name]) => name)
+
+/**
+ * RPC endpoint. Supplied by the operator via env and never committed.
+ *
+ * The fallback is a keyless public endpoint so the app degrades to read-only
+ * rather than dying when no key is configured. It is rate-limited and not
+ * suitable for production — set `NEXT_PUBLIC_STARKNET_RPC_URL` to your own
+ * Alchemy endpoint. (Blast's public Starknet RPC was retired and now returns
+ * an error to every call, so it is deliberately not used here.)
+ */
 export const RPC_URL =
-  process.env.NEXT_PUBLIC_STARKNET_RPC_URL ?? 'https://starknet-mainnet.public.blastapi.io/rpc/v0_9'
+  process.env.NEXT_PUBLIC_STARKNET_RPC_URL ?? 'https://rpc.starknet.lava.build:443'
 
 /**
  * Minimum Wallet API version that carries the STRK20 methods.
@@ -52,13 +81,17 @@ export const NOTE_MATURITY_BLOCKS = 10
 
 /**
  * The pool charges a flat fee per private operation, denominated in STRK.
- * This constant is only a display fallback for first paint — the real value is
- * read from the pool's `get_fee_amount` and must be subtracted before
- * pre-filling any MAX amount, or the operation fails after the user has signed.
+ *
+ * Read from `get_fee_amount()` on mainnet, where it is currently 6 STRK — not
+ * the 4 quoted in the published docs. Always subtract the live value before
+ * pre-filling a MAX amount: underestimating means the operation fails *after*
+ * the user has already signed. Wallet flows sponsor gas but not this fee.
+ *
+ * This constant is a first-paint fallback only.
  */
-export const FALLBACK_POOL_FEE_STRK = 4n * 10n ** 18n
+export const FALLBACK_POOL_FEE_STRK = 6n * 10n ** 18n
 
-export type TokenSymbol = 'STRK' | 'USDC' | 'ETH' | 'WBTC'
+export type TokenSymbol = 'STRK' | 'USDC' | 'ETH' | 'WBTC' | 'strkBTC'
 
 export interface TokenConfig {
   symbol: TokenSymbol
@@ -70,12 +103,14 @@ export interface TokenConfig {
 }
 
 /**
- * Mainnet tokens Aether can shield and route.
+ * Mainnet tokens Aether offers.
  *
- * Addresses are the canonical Starknet mainnet deployments. `verifyTokens()`
- * in `lib/strk20/verify.ts` re-checks each one against the chain at boot in
- * development, so a stale constant surfaces immediately instead of silently
- * routing value to the wrong contract.
+ * Every address below was confirmed on-chain by calling `name`, `symbol` and
+ * `decimals` against two independent RPC providers.
+ *
+ * The pool itself has no token allowlist — its ABI has no such function, and
+ * 35 different ERC-20s have been shielded through it. This list is therefore a
+ * product choice about what Aether routes, not a protocol limit.
  */
 export const TOKENS: Record<TokenSymbol, TokenConfig> = {
   STRK: {
@@ -87,10 +122,27 @@ export const TOKENS: Record<TokenSymbol, TokenConfig> = {
   },
   USDC: {
     symbol: 'USDC',
-    name: 'USD Coin',
-    address: '0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8',
+    name: 'USDC',
+    // Native Circle USDC.
+    //
+    // NOT 0x053c9125…68a8 — that is the bridged USDC.e, and the migration to
+    // native is effectively complete. The difference is decisive inside the
+    // pool: native shows ~19,600 shielded events against bridged's 80, so
+    // routing here would land value in a venue with essentially no anonymity
+    // set and almost no liquidity to swap against.
+    address: '0x033068f6539f8e6e6b131e6b2b814e6c34a5224bc66947c47dab9dfee93b35fb',
     decimals: 6,
     kind: 'stable',
+  },
+  strkBTC: {
+    symbol: 'strkBTC',
+    name: 'strkBTC',
+    // Backed 1:1 by BTC and the third most-shielded asset in the pool, ahead
+    // of ETH. Distinct from xstrkBTC (staked) and from the several unrelated
+    // contracts that also use a BTC-like symbol with 18 decimals.
+    address: '0x0787150e306e6eae6e3f79dea881770e8bbff2c1b8eb490f969669ee945b3135',
+    decimals: 8,
+    kind: 'major',
   },
   ETH: {
     symbol: 'ETH',
@@ -101,7 +153,7 @@ export const TOKENS: Record<TokenSymbol, TokenConfig> = {
   },
   WBTC: {
     symbol: 'WBTC',
-    name: 'Wrapped Bitcoin',
+    name: 'Wrapped BTC',
     address: '0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac',
     decimals: 8,
     kind: 'major',

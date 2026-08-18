@@ -268,7 +268,8 @@ export function describeDuration(ms: number): string {
 }
 
 function signed(x: number): string {
-  return x >= 0 ? `+${round1(x)}` : `${round1(x)}`
+  const value = round1(x)
+  return `${value >= 0 ? '+' : '-'}${Math.abs(value).toFixed(1)}`
 }
 
 function economicsFor(route: Route, overrides: PlannerInput['routeEconomics']): RouteEconomics {
@@ -566,11 +567,15 @@ export function generatePlan(input: PlannerInput): PlanResult {
   const nextId = (type: ActionType): string =>
     `aether-${input.seed}-${String(sequence++).padStart(2, '0')}-${type.toLowerCase()}`
 
-  /** Amounts that must not be re-used: history inside 48h, plus this plan's own. */
+  /**
+   * Amounts that must not be re-used: history inside the 48h window, plus the
+   * amounts this plan itself commits to as it goes. Future-dated records count
+   * as live — they are pending, not expired — matching `isAmountRecentlyUsed`.
+   */
   const usedAmounts: RecentAmount[] = input.history
     .filter((r) => {
       const age = now - r.timestamp
-      return age >= 0 && age <= AMOUNT_REUSE_WINDOW_MS
+      return age < 0 || age <= AMOUNT_REUSE_WINDOW_MS
     })
     .map((r) => ({ amount: r.amount, timestamp: r.timestamp }))
 
@@ -880,11 +885,10 @@ export function generatePlan(input: PlannerInput): PlanResult {
     }
 
     const delay = window.start - now
-    const verb = chosen.type === 'LEND' ? 'Supplying' : 'Routing'
     const destination =
       chosen.type === 'LEND'
-        ? `${chosen.route} as private collateral`
-        : `${chosen.targetAsset} through ${chosen.route}`
+        ? `Supplying ${formatAmount(amount, sourceDecimals)} ${sourceAsset} to ${chosen.route} as private collateral`
+        : `Routing ${formatAmount(amount, sourceDecimals)} ${sourceAsset} into ${chosen.targetAsset} through ${chosen.route}`
     const because = collision
       ? `${collision.count} prior ${formatAmount(collision.amount, sourceDecimals)} ${sourceAsset} action${collision.count === 1 ? '' : 's'} in the last 48h would otherwise fingerprint this wallet`
       : `a single ${formatAmount(deployable, sourceDecimals)} ${sourceAsset} move would sit almost alone in the ${sourceTier} tier, where the pool shows only ${groupDigits(String(sourceTierDepth))} comparable notes`
@@ -901,7 +905,7 @@ export function generatePlan(input: PlannerInput): PlanResult {
       recommendedWindowEnd: window.end,
       expectedPrivacyDelta: round1(projectedScore - currentScore),
       expectedCostBps: costBps,
-      rationale: `${verb} ${formatAmount(amount, sourceDecimals)} ${sourceAsset} into ${destination} as tranche ${i + 1} of ${splits.length}, split to a non-round size because ${because}, and held for an irregular ${describeDuration(delay)} into a ${describeDuration(window.end - window.start)} window so the execution rhythm does not repeat this wallet's previous ${userGaps.length} intervals; projected effective privacy ${signed(projectedScore - currentScore)} points at ${costBps} bps of cost.`,
+      rationale: `${destination} in tranche ${i + 1} of ${splits.length}, split to a non-round size because ${because}, and delayed an irregular ${describeDuration(delay)} into a ${describeDuration(window.end - window.start)} window so this wallet's execution rhythm does not repeat its previous ${userGaps.length} intervals; projected effective privacy ${signed(projectedScore - currentScore)} points at ${costBps} bps of cost.`,
     })
 
     usedAmounts.push({ amount, timestamp: window.start })

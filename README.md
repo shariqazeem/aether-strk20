@@ -133,14 +133,42 @@ reproducible and testable.
 
 ### Live mainnet addresses
 
-| | |
-|---|---|
-| STRK20 pool | [`0x040337b1…ffe812a`](https://voyager.online/contract/0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a) |
-| Ekubo anonymizer (class hash) | `0x2a4ac595283d4d64b9952f5ef5c0da1775bfdb7c9d92237524a21dd8d19ebd7` |
-| Vesu anonymizer (class hash) | `0x3751128dc3ebd36215f982766f14aaca8f78793e4b0f42a73e49372a8e24aae` |
+Every address below was confirmed on-chain by calling `name` / `symbol` /
+`decimals` (or `getClassAt`) against two independent RPC providers, rather than
+copied from documentation. Three of the values that documentation would have
+given are wrong, so this mattered:
+
+| | | |
+|---|---|---|
+| STRK20 pool | [`0x040337b1…ffe812a`](https://voyager.online/contract/0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a) | live, `get_version() = "2.0"`, not paused |
+| Ekubo anonymizer | `0x2a4ac595…d8d19ebd7` | **declared**, ABI exposes `privacy_invoke` |
+| Vesu anonymizer | `0x3751128d…2a8e24aae` | **not declared on mainnet** |
+| USDC (native) | `0x033068f6…ee93b35fb` | 6 dp |
+| strkBTC | `0x0787150e…e945b3135` | 8 dp |
+| STRK | `0x04718f5a…87c938d` | 18 dp |
+| ETH | `0x049d3657…9e004dc7` | 18 dp |
+
+Three corrections worth recording, because each would have failed silently:
+
+- **USDC.** The obvious address (`0x053c9125…68a8`) is bridged **USDC.e**, not
+  native USDC. Inside the pool the gap is decisive — roughly 19,600 shielded
+  events for native against 80 for bridged. Routing to the bridged token would
+  put value somewhere with essentially no anonymity set.
+- **Pool fee.** Documentation says 4 STRK; `get_fee_amount()` returns **6**.
+  Pre-filling a MAX amount from the documented figure fails *after* the user
+  has signed.
+- **Vesu anonymizer.** Its published class hash is not declared on mainnet
+  (`getClassAt` returns "class hash not found" on both providers). The hash is
+  real but comes from a release-candidate tag. **The private-lending route is
+  therefore unavailable**, and the planner does not offer it. Ekubo and the
+  AVNU private-swap route are both live.
 
 The pool address is independently corroborated: it is the value shipped as
 `PRIVACY_POOL_ADDRESS` in `@avnu/avnu-sdk@4.2.0`.
+
+The pool has **no token allowlist** — its ABI contains no such function, and 35
+different ERC-20s have been shielded through it. Aether's token list is a
+product choice, not a protocol limit.
 
 ### Pinned stack
 
