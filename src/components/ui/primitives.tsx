@@ -32,10 +32,6 @@ export function Reveal({
   )
 }
 
-export function Eyebrow({ children }: { children: ReactNode }) {
-  return <p className="eyebrow">{children}</p>
-}
-
 /** Shared page gutter. */
 export function Container({
   children,
@@ -75,7 +71,7 @@ export function Button({
   }
 
   const variants = {
-    primary: 'bg-veil text-white hover:bg-veil-deep',
+    primary: 'bg-ink text-white hover:bg-ink-soft',
     secondary: 'bg-black/[0.05] text-ink hover:bg-black/[0.08]',
     ghost: 'text-ink-soft hover:bg-black/[0.05] hover:text-ink',
   }
@@ -200,33 +196,36 @@ export function Hex({
   return body
 }
 
-export function SectionHeading({
-  eyebrow,
+export function SectionIndex({
+  index,
+  label,
   title,
   lede,
-  align = 'left',
 }: {
-  eyebrow: string
+  index: string
+  label: string
   title: ReactNode
   lede?: ReactNode
-  align?: 'left' | 'center'
 }) {
-  const centered = align === 'center'
   return (
-    <div className={centered ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}>
-      <Reveal>
-        <Eyebrow>{eyebrow}</Eyebrow>
-      </Reveal>
-      <Reveal delay={60}>
-        <h2 className="display-lg mt-2.5 text-balance">{title}</h2>
-      </Reveal>
-      {lede ? (
-        <Reveal delay={120}>
-          <p className="mt-4 text-[16px] leading-relaxed text-ink-muted text-pretty sm:text-[17px]">
-            {lede}
-          </p>
+    <div className="grid gap-5 border-t border-rule pt-6 md:grid-cols-[88px_1fr] md:gap-8">
+      <div className="mono-label leading-relaxed">
+        {index}
+        <br />
+        {label}
+      </div>
+      <div className="max-w-2xl">
+        <Reveal>
+          <h2 className="display-lg text-balance">{title}</h2>
         </Reveal>
-      ) : null}
+        {lede ? (
+          <Reveal delay={80}>
+            <p className="mt-4 text-[15.5px] leading-relaxed text-ink-muted text-pretty sm:text-[16.5px]">
+              {lede}
+            </p>
+          </Reveal>
+        ) : null}
+      </div>
     </div>
   )
 }

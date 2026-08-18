@@ -1,69 +1,62 @@
 'use client'
 
-import { Container, Reveal, SectionHeading, StateBadge } from '@/components/ui/primitives'
+import { Container, Reveal, SectionIndex, StateBadge } from '@/components/ui/primitives'
 
 /**
- * The claim, made inspectable: your ledger next to what a chain observer sees
- * of it, row for row. This panel ships inside the app — the landing page shows
- * a slice of the product, not an illustration of it.
+ * The claim, made inspectable: your ledger and the chain's view of it, row for
+ * row inside one panel. The observer column is mostly em-dashes — that empty
+ * space is the product, so the layout gives it room instead of decorating it.
  */
 
 interface Row {
   time: string
   action: string
   detail: string
-  asset: string
   amount: string
   observed: string
   observedNote: string
-  /** The deposit genuinely is public — honesty beats a clean story. */
   publiclyVisible?: boolean
 }
 
 const ROWS: Row[] = [
   {
-    time: '09:12',
+    time: '09:12:44',
     action: 'Shield',
     detail: 'Deposit into the pool',
-    asset: 'USDC',
-    amount: '4,182.44',
-    observed: 'Deposit — 4,182.44 USDC',
-    observedNote: 'Public. Your address is visible here, and only here.',
+    amount: '4,182.44 USDC',
+    observed: 'Deposit · 4,182.44 USDC',
+    observedNote: 'Your address appears here, and only here.',
     publiclyVisible: true,
   },
   {
-    time: '14:47',
+    time: '14:47:03',
     action: 'Private swap',
     detail: 'USDC → strkBTC via AVNU',
-    asset: 'sBTC',
-    amount: '0.03502',
-    observed: 'Pool → executor → AMM',
+    amount: '0.03502 sBTC',
+    observed: 'executor → AMM',
     observedNote: 'Caller is the executor contract. No link to you.',
   },
   {
-    time: '21:03',
+    time: '21:03:57',
     action: 'Private swap',
     detail: 'Second tranche, different size',
-    asset: 'sBTC',
-    amount: '0.02708',
-    observed: 'Pool → executor → AMM',
+    amount: '0.02708 sBTC',
+    observed: 'executor → AMM',
     observedNote: 'Amount, owner and route stay inside the pool.',
   },
   {
-    time: '02:38',
+    time: '02:38:19',
     action: 'Rebalance',
     detail: 'Note-to-note, internal',
-    asset: 'sBTC',
-    amount: '0.01104',
+    amount: '0.01104 sBTC',
     observed: '—',
-    observedNote: 'Nothing. No contract call, no event, no public leg.',
+    observedNote: 'No contract call. No event. No public leg.',
   },
   {
-    time: '11:55',
+    time: '11:55:36',
     action: 'Stealth DCA',
     detail: 'Tranche 3 of 7',
-    asset: 'sBTC',
-    amount: '0.00918',
+    amount: '0.00918 sBTC',
     observed: '—',
     observedNote: 'Nothing.',
   },
@@ -71,96 +64,85 @@ const ROWS: Row[] = [
 
 export function AttackerView() {
   return (
-    <section id="attacker" className="scroll-mt-14 border-t border-rule py-20 sm:py-28">
+    <section id="attacker" className="scroll-mt-14 py-20 sm:py-28">
       <Container>
-        <SectionHeading
-          eyebrow="Attacker view"
+        <SectionIndex
+          index="02"
+          label="Attacker"
           title="Everything you did. Almost nothing they saw."
-          lede="A privacy claim you can't inspect is marketing. Aether ships the adversary's console next to your own, built from the same data — check the asymmetry yourself."
+          lede="A privacy claim you can't inspect is marketing. This panel ships inside the app, built from the same data — check the asymmetry yourself."
         />
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-2">
-          {/* Your ledger */}
-          <Reveal>
-            <div className="card overflow-hidden">
-              <header className="flex items-center justify-between border-b border-rule px-5 py-3.5">
-                <div className="flex items-center gap-2">
-                  <span className="size-1.5 rounded-full bg-veil" />
-                  <h3 className="text-[13.5px] font-semibold tracking-tight">Your ledger</h3>
-                </div>
+        <Reveal delay={120}>
+          <div className="panel mt-10">
+            {/* Panel header */}
+            <div className="grid border-b border-rule md:grid-cols-2">
+              <div className="flex items-center justify-between gap-3 border-b border-rule px-5 py-3 md:border-r md:border-b-0">
+                <span className="mono-label">Your ledger</span>
                 <StateBadge state="private">encrypted to you</StateBadge>
-              </header>
+              </div>
+              <div className="flex items-center justify-between gap-3 px-5 py-3">
+                <span className="mono-label">Chain observer</span>
+                <StateBadge state="neutral">public data</StateBadge>
+              </div>
+            </div>
 
-              <ul className="divide-y divide-rule">
-                {ROWS.map((row, index) => (
-                  <Reveal as="li" key={row.time} delay={index * 50} className="px-5 py-3.5">
-                    <div className="flex items-baseline justify-between gap-4">
+            {ROWS.map((row, index) => (
+              <Reveal
+                key={row.time}
+                delay={index * 50}
+                className={index < ROWS.length - 1 ? 'border-b border-rule' : ''}
+              >
+                <div className="grid md:grid-cols-2">
+                  {/* Yours */}
+                  <div className="flex items-baseline justify-between gap-4 border-b border-rule/60 px-5 py-3.5 md:border-r md:border-b-0">
+                    <div className="flex min-w-0 items-baseline gap-3">
+                      <span className="tabular shrink-0 font-mono text-[10.5px] text-ink-faint">
+                        {row.time}
+                      </span>
                       <div className="min-w-0">
                         <p className="truncate text-[13.5px] font-medium">{row.action}</p>
-                        <p className="mt-0.5 truncate text-[12px] text-ink-faint">{row.detail}</p>
-                      </div>
-                      <div className="shrink-0 text-right">
-                        <p className="tabular font-mono text-[12.5px] font-medium">
-                          {row.amount} <span className="text-ink-faint">{row.asset}</span>
-                        </p>
-                        <p className="tabular mt-0.5 font-mono text-[11px] text-ink-faint">
-                          {row.time}
-                        </p>
+                        <p className="truncate text-[11.5px] text-ink-faint">{row.detail}</p>
                       </div>
                     </div>
-                  </Reveal>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
+                    <span className="tabular shrink-0 font-mono text-[12px] font-medium">
+                      {row.amount}
+                    </span>
+                  </div>
 
-          {/* Observer */}
-          <Reveal delay={80}>
-            <div className="card overflow-hidden bg-paper-sunk/40">
-              <header className="flex items-center justify-between border-b border-rule px-5 py-3.5">
-                <div className="flex items-center gap-2">
-                  <span className="size-1.5 rounded-full bg-ink-faint" />
-                  <h3 className="text-[13.5px] font-semibold tracking-tight">
-                    What a chain observer sees
-                  </h3>
+                  {/* Theirs */}
+                  <div className="flex items-baseline justify-between gap-4 bg-paper-sunk/50 px-5 py-3.5">
+                    <div className="min-w-0">
+                      <p
+                        className={`truncate font-mono text-[12.5px] ${
+                          row.publiclyVisible
+                            ? 'font-medium text-exposed'
+                            : row.observed === '—'
+                              ? 'text-ink-faint'
+                              : 'text-ink-muted'
+                        }`}
+                      >
+                        {row.observed}
+                      </p>
+                      <p className="mt-0.5 truncate text-[11.5px] text-ink-faint">
+                        {row.observedNote}
+                      </p>
+                    </div>
+                    {row.publiclyVisible && (
+                      <StateBadge state="public">public</StateBadge>
+                    )}
+                  </div>
                 </div>
-                <StateBadge state="neutral">public data</StateBadge>
-              </header>
+              </Reveal>
+            ))}
+          </div>
+        </Reveal>
 
-              <ul className="divide-y divide-rule">
-                {ROWS.map((row, index) => (
-                  <Reveal as="li" key={row.time} delay={index * 50} className="px-5 py-3.5">
-                    <div className="flex items-baseline justify-between gap-4">
-                      <div className="min-w-0">
-                        <p
-                          className={`truncate text-[13.5px] font-medium ${
-                            row.publiclyVisible ? 'text-exposed' : 'text-ink-faint'
-                          }`}
-                        >
-                          {row.observed}
-                        </p>
-                        <p className="mt-0.5 text-[12px] leading-snug text-ink-faint text-pretty">
-                          {row.observedNote}
-                        </p>
-                      </div>
-                      {row.publiclyVisible ? (
-                        <StateBadge state="public">public</StateBadge>
-                      ) : (
-                        <span className="shrink-0 font-mono text-[11px] text-ink-faint">hidden</span>
-                      )}
-                    </div>
-                  </Reveal>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
-        </div>
-
-        <Reveal delay={100}>
-          <p className="mt-6 max-w-3xl text-[13px] leading-relaxed text-ink-muted text-pretty">
+        <Reveal delay={140}>
+          <p className="mt-5 max-w-3xl text-[13px] leading-relaxed text-ink-muted text-pretty">
             <span className="font-medium text-ink">The deposit is public, and Aether says so.</span>{' '}
-            It is the one moment your address appears — which is why shielding happens well ahead of
-            the strategy it funds. Every private transaction is submitted by a relayer, so the
+            It is the one moment your address appears — which is why shielding happens well ahead
+            of the strategy it funds. Every private transaction is submitted by a relayer, so the
             sender field is the relayer&rsquo;s account for every user of the pool.
           </p>
         </Reveal>
