@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { LiveDemo } from '@/components/landing/live-demo'
+import { CalloutScene, OpeningScene } from '@/components/landing/scenes'
 import { AttackerView } from '@/components/landing/attacker-view'
 import {
   AetherMark,
@@ -20,7 +20,8 @@ export default function LandingPage() {
   return (
     <div className="relative">
       <SiteNav />
-      <Hero />
+      <OpeningScene />
+      <CalloutScene />
       <ProtocolTicker />
       <Statement />
       <EngineSection />
@@ -74,69 +75,6 @@ function SiteNav() {
         </nav>
       </Container>
     </header>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/*  Hero — the product, running                                        */
-/* ------------------------------------------------------------------ */
-
-function Hero() {
-  return (
-    <section className="relative overflow-hidden">
-      <Container>
-        <div className="grid items-center gap-12 py-16 sm:py-20 lg:min-h-[calc(100svh-3.25rem)] lg:grid-cols-[1.02fr_1fr] lg:gap-14 lg:py-12">
-          <div>
-            <Reveal blur>
-              <p className="mono-label flex items-center gap-2">
-                <span className="pulse-dot size-1.5 rounded-full bg-good" />
-                STRK20 · Starknet mainnet
-              </p>
-            </Reveal>
-
-            <Reveal blur delay={70}>
-              <h1 className="display-xl mt-5">
-                Shield once.
-                <br />
-                <span className="text-ink-faint">Stay unseen.</span>
-              </h1>
-            </Reveal>
-
-            <Reveal delay={160}>
-              <p className="mt-6 max-w-md text-[16.5px] leading-relaxed text-ink-muted text-pretty sm:text-[17.5px]">
-                A private portfolio engine. Swaps, DCA and rebalancing run entirely inside the
-                STRK20 pool — sized and timed so your behaviour never becomes a fingerprint.
-              </p>
-            </Reveal>
-
-            <Reveal delay={240}>
-              <div className="mt-8 flex flex-wrap items-center gap-2.5">
-                <Button href="/app" size="lg">
-                  Open App
-                </Button>
-                <Button
-                  href="https://github.com/shariqazeem/aether-strk20"
-                  variant="secondary"
-                  size="lg"
-                >
-                  View source
-                </Button>
-              </div>
-            </Reveal>
-
-            <Reveal delay={320}>
-              <p className="mt-9 font-mono text-[11px] leading-relaxed tracking-wide text-ink-faint">
-                0 viewing keys held · 0 custom Cairo · 81 engine tests
-              </p>
-            </Reveal>
-          </div>
-
-          <Reveal delay={200}>
-            <LiveDemo />
-          </Reveal>
-        </div>
-      </Container>
-    </section>
   )
 }
 
