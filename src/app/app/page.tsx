@@ -11,6 +11,7 @@ import { PlanPanel } from '@/components/app/plan-panel'
 import { ActivityPanel } from '@/components/app/activity-panel'
 import { DisclosePanel } from '@/components/app/disclose-panel'
 import { TargetBar } from '@/components/app/target-bar'
+import { ExposurePanel } from '@/components/app/exposure-panel'
 import { StepBlocked, StepSection } from '@/components/app/step-section'
 import { AetherMark, Button, Container, Hex, StateBadge } from '@/components/ui/primitives'
 import { POOL_ADDRESS, explorerContract, NOTE_MATURITY_BLOCKS } from '@/lib/strk20/config'
@@ -106,10 +107,7 @@ function ExposureStep() {
       status={target ? <StateBadge state="neutral">ready</StateBadge> : undefined}
     >
       {target ? (
-        <StepBlocked
-          reason="Adversary engine is being wired in"
-          hint="The heuristics and their scoring are implemented and unit-tested; this panel is the last piece connecting them to the live footprint."
-        />
+        <ExposurePanel address={target} />
       ) : (
         <StepBlocked
           reason="Choose a target above"
