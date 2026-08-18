@@ -82,6 +82,10 @@ Aether execution engine
 
 ---
 
+> The full reasoning — what a pool hides, what stays public, each heuristic and
+> its remedy, and an explicit list of what Aether does **not** claim — is in
+> [docs/ATTACK-MODEL.md](docs/ATTACK-MODEL.md).
+
 ## The Effective Privacy Score
 
 The score is a deterministic, client-side function of observable state. The
