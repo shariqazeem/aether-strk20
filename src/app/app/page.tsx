@@ -6,6 +6,7 @@ import type { WalletWithStarknetFeatures } from '@starknet-io/get-starknet-walle
 import { useAether } from '@/lib/store/aether'
 import { listWallets, subscribeToWallets, supportsStrk20, formatUnits } from '@/lib/strk20/wallet'
 import { PrivacyScore, type ScoreDimensions } from '@/components/privacy-score'
+import { ShieldPanel } from '@/components/app/shield-panel'
 import { Button, Container, Eyebrow, Hex, StateBadge } from '@/components/ui/primitives'
 import { POOL_ADDRESS, explorerContract, NOTE_MATURITY_BLOCKS } from '@/lib/strk20/config'
 
@@ -190,6 +191,8 @@ function Dashboard() {
           <p className="text-[13px] leading-snug text-exposed text-pretty">{error}</p>
         </div>
       )}
+
+      <ShieldPanel />
 
       <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr]">
         <section className="card p-6">
