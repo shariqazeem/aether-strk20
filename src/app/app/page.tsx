@@ -4,17 +4,24 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { WalletWithStarknetFeatures } from '@starknet-io/get-starknet-wallet-standard/features'
 import { useAether } from '@/lib/store/aether'
+import { usePlan } from '@/lib/store/plan'
 import { listWallets, subscribeToWallets, supportsStrk20, formatUnits } from '@/lib/strk20/wallet'
 import { PrivacyScore, type ScoreDimensions } from '@/components/privacy-score'
 import { ShieldPanel } from '@/components/app/shield-panel'
+import { PlanPanel } from '@/components/app/plan-panel'
+import { ActivityPanel } from '@/components/app/activity-panel'
+import { DisclosePanel } from '@/components/app/disclose-panel'
 import {
   AetherMark,
   Button,
   Container,
   Hex,
+  Segmented,
   StateBadge,
 } from '@/components/ui/primitives'
 import { POOL_ADDRESS, explorerContract, NOTE_MATURITY_BLOCKS } from '@/lib/strk20/config'
+
+type Tab = 'overview' | 'plan' | 'activity' | 'disclose'
 
 export default function AppPage() {
   const status = useAether((s) => s.status)
@@ -78,8 +85,8 @@ function ConnectGate() {
     <div className="mx-auto max-w-md py-10">
       <h1 className="display-md text-balance">Connect a privacy-enabled wallet</h1>
       <p className="mt-3 text-[14.5px] leading-relaxed text-ink-muted text-pretty">
-        Aether never holds your viewing key and never generates proofs — your wallet does both.
-        It needs to speak Wallet API 0.10.3 or newer.
+        Aether never holds your viewing key and never generates proofs — your wallet does both. It
+        needs to speak Wallet API 0.10.3 or newer.
       </p>
 
       <div className="mt-7 space-y-2.5">
@@ -117,7 +124,10 @@ function ConnectGate() {
             ))}
 
             {incapable.map((wallet) => (
-              <div key={wallet.name} className="card-flat flex w-full items-center gap-3.5 p-4 opacity-65">
+              <div
+                key={wallet.name}
+                className="card-flat flex w-full items-center gap-3.5 p-4 opacity-65"
+              >
                 {wallet.icon ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={wallet.icon} alt="" className="size-9 rounded-[10px] grayscale" />
@@ -145,11 +155,7 @@ function ConnectGate() {
   )
 }
 
-/**
- * Until the wallet grants balance access there is nothing to score, and
- * inventing a number would undermine the premise. The empty state is honest.
- */
-const AWAITING: ScoreDimensions = {
+const EMPTY_DIMENSIONS: ScoreDimensions = {
   anonymitySet: 0,
   amountEntropy: 0,
   timingEntropy: 0,
@@ -158,29 +164,76 @@ const AWAITING: ScoreDimensions = {
 }
 
 function Dashboard() {
-  const { balances, balancesLoading, balancesRequestedAt, refreshBalances, error } = useAether()
-  const hasRead = balancesRequestedAt !== null
+  const { address, balances, balancesRequestedAt } = useAether()
+  const { loadActivity, refreshScore, activity } = usePlan()
+  const [tab, setTab] = useState<Tab>('overview')
+
+  // Measure the pool once per session, as soon as the dashboard opens.
+  useEffect(() => {
+    if (!activity) void loadActivity()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Recompute the score whenever fresh balances land.
+  useEffect(() => {
+    if (address && balancesRequestedAt !== null) {
+      refreshScore(
+        address,
+        balances.map((balance) => ({ symbol: balance.symbol, raw: balance.raw })),
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, balancesRequestedAt])
 
   return (
-    <div className="space-y-5 py-2">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="space-y-6 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="list-header">Shielded portfolio</p>
           <h1 className="display-md mt-1.5">Your private position</h1>
         </div>
-        <Button onClick={refreshBalances} disabled={balancesLoading} variant="secondary">
-          {balancesLoading ? 'Waiting for wallet…' : hasRead ? 'Refresh balances' : 'Read balances'}
-        </Button>
+        <Segmented<Tab>
+          ariaLabel="Dashboard section"
+          value={tab}
+          onChange={setTab}
+          options={[
+            { value: 'overview', label: 'Overview' },
+            { value: 'plan', label: 'Plan' },
+            { value: 'activity', label: 'Activity' },
+            { value: 'disclose', label: 'Disclose' },
+          ]}
+        />
       </div>
 
+      {tab === 'overview' && <OverviewTab />}
+      {tab === 'plan' && <PlanPanel />}
+      {tab === 'activity' && <ActivityPanel />}
+      {tab === 'disclose' && <DisclosePanel />}
+    </div>
+  )
+}
+
+function OverviewTab() {
+  const { balances, balancesLoading, balancesRequestedAt, refreshBalances, error } = useAether()
+  const breakdown = usePlan((state) => state.breakdown)
+  const hasRead = balancesRequestedAt !== null
+
+  return (
+    <div className="space-y-5">
       {!hasRead && (
         <div className="card-flat border-dashed p-5">
-          <p className="text-[13.5px] font-semibold">Balances are not read automatically</p>
-          <p className="mt-1.5 max-w-2xl text-[13px] leading-relaxed text-ink-muted text-pretty">
-            Reading shielded balances asks your wallet for consent to data Aether otherwise has no
-            reason to see. Nothing is fetched until you press the button — and the score stays
-            empty rather than showing an invented number.
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="max-w-2xl">
+              <p className="text-[13.5px] font-semibold">Balances are not read automatically</p>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-ink-muted text-pretty">
+                Reading shielded balances asks your wallet for consent to data Aether otherwise has
+                no reason to see. Nothing is fetched until you ask.
+              </p>
+            </div>
+            <Button onClick={refreshBalances} disabled={balancesLoading}>
+              {balancesLoading ? 'Waiting for wallet…' : 'Read balances'}
+            </Button>
+          </div>
         </div>
       )}
 
@@ -196,7 +249,18 @@ function Dashboard() {
         <section className="card p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-[13.5px] font-semibold tracking-tight">Private balances</h2>
-            <StateBadge state="private">inside the pool</StateBadge>
+            <div className="flex items-center gap-2">
+              {hasRead && (
+                <button
+                  onClick={refreshBalances}
+                  disabled={balancesLoading}
+                  className="text-[12px] font-medium text-veil hover:underline underline-offset-2 disabled:opacity-50"
+                >
+                  {balancesLoading ? 'Refreshing…' : 'Refresh'}
+                </button>
+              )}
+              <StateBadge state="private">inside the pool</StateBadge>
+            </div>
           </div>
 
           {balancesLoading ? (
@@ -241,16 +305,16 @@ function Dashboard() {
         <section className="card p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-[13.5px] font-semibold tracking-tight">Effective privacy</h2>
-            <StateBadge state={hasRead ? 'private' : 'neutral'}>
-              {hasRead ? 'live' : 'awaiting data'}
+            <StateBadge state={breakdown ? 'private' : 'neutral'}>
+              {breakdown ? 'live' : 'awaiting data'}
             </StateBadge>
           </div>
           <div className="mt-5">
-            <PrivacyScore dimensions={AWAITING} compact />
+            <PrivacyScore dimensions={breakdown ?? EMPTY_DIMENSIONS} compact />
           </div>
           <p className="mt-5 text-[12px] leading-relaxed text-ink-muted text-pretty">
-            Computed from your action history and live pool activity. It stays at zero until there
-            is real data behind it.
+            Computed from your local action ledger and live pool activity. It stays at zero until
+            there is real data behind it — never an invented number.
           </p>
         </section>
       </div>

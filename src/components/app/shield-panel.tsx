@@ -7,6 +7,7 @@ import { readPoolFee } from '@/lib/strk20/pool'
 import { formatUnits, parseUnits } from '@/lib/strk20/wallet'
 import { TOKENS, TOKEN_LIST, explorerTx, type TokenSymbol } from '@/lib/strk20/config'
 import { Button, Hex, StateBadge } from '@/components/ui/primitives'
+import { appendLedger } from '@/lib/history'
 
 /**
  * Shield: the one public step.
@@ -71,6 +72,20 @@ export function ShieldPanel() {
 
       setTxHash(transaction_hash)
       setPhase('submitted')
+
+      // The deposit is the one public act; the ledger records it that way so
+      // the attacker view over your real history stays honest.
+      if (address) {
+        appendLedger(address, {
+          timestamp: Date.now(),
+          type: 'SHIELD',
+          asset: token.symbol,
+          amount: parsed,
+          route: 'DIRECT',
+          txHash: transaction_hash,
+          observer: 'deposit · public',
+        })
+      }
 
       // Deliberately do not block the UI on confirmation. Paymaster-relayed
       // hashes can take a while to surface at the selected RPC, and a spinner

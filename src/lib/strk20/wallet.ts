@@ -12,7 +12,7 @@ import { createStore, type Store } from '@starknet-io/get-starknet-discovery'
 import type { WalletWithStarknetFeatures } from '@starknet-io/get-starknet-wallet-standard/features'
 import { RpcProvider, WalletAccountV6 } from 'starknet'
 import type { STRK20_BALANCE_ENTRY } from '@starknet-io/types-js'
-import { CHAIN_ID, REQUIRED_WALLET_API_VERSION, RPC_URL, TOKEN_LIST, tokenByAddress } from './config'
+import { CHAIN_ID, REQUIRED_WALLET_API_VERSION, RPC_URL, TOKEN_LIST, tokenByAddress, type TokenSymbol } from './config'
 
 let store: Store | null = null
 
@@ -88,7 +88,7 @@ export async function connectWallet(
 }
 
 export interface ShieldedBalance {
-  symbol: string
+  symbol: TokenSymbol
   address: string
   raw: bigint
   decimals: number
