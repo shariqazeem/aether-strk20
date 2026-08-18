@@ -75,8 +75,6 @@ export function ShieldPanel() {
       // Deliberately do not block the UI on confirmation. Paymaster-relayed
       // hashes can take a while to surface at the selected RPC, and a spinner
       // that never resolves reads as a failure when the transaction is fine.
-      // The explorer link is live immediately; balances refresh in the
-      // background once it lands.
       void refreshBalances()
     } catch (caught) {
       setError(explainWalletError(caught))
@@ -85,138 +83,136 @@ export function ShieldPanel() {
   }
 
   return (
-    <section className="card p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-[13px] font-semibold tracking-tight">Shield</h2>
+    <section className="card p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2.5">
+        <h2 className="text-[13.5px] font-semibold tracking-tight">Shield</h2>
         <StateBadge state="public">this step is public</StateBadge>
       </div>
 
-      <p className="mt-3 text-[13px] leading-relaxed text-ink-muted text-pretty">
-        A deposit names your address on-chain — it is the one moment you are visible, and Aether
-        does not pretend otherwise. Shield well ahead of the strategy it funds so nothing on-chain
-        connects the two.
+      <p className="mt-2.5 max-w-2xl text-[13px] leading-relaxed text-ink-muted text-pretty">
+        A deposit names your address on-chain — the one moment you are visible. Shield well ahead
+        of the strategy it funds so nothing on-chain connects the two.
       </p>
 
-      {/* Asset */}
-      <div className="mt-5">
-        <label className="eyebrow" htmlFor="shield-asset">
-          Asset
-        </label>
-        <div id="shield-asset" className="mt-2 flex flex-wrap gap-2">
-          {TOKEN_LIST.map((entry) => {
-            const selected = entry.symbol === symbol
-            return (
-              <button
-                key={entry.symbol}
-                onClick={() => setSymbol(entry.symbol)}
-                className={`rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-all ${
-                  selected
-                    ? 'border-veil-mid bg-veil-soft text-veil-deep'
-                    : 'border-rule bg-paper hover:border-rule-strong hover:bg-paper-sunk'
-                }`}
-              >
-                {entry.symbol}
-              </button>
-            )
-          })}
-        </div>
-      </div>
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        <div>
+          {/* Asset */}
+          <p className="list-header">Asset</p>
+          <div className="mt-2 flex flex-wrap gap-1.5" role="tablist" aria-label="Asset">
+            {TOKEN_LIST.map((entry) => {
+              const selected = entry.symbol === symbol
+              return (
+                <button
+                  key={entry.symbol}
+                  role="tab"
+                  aria-selected={selected}
+                  onClick={() => setSymbol(entry.symbol)}
+                  className={`h-8 rounded-full px-3.5 text-[13px] font-medium transition-all duration-150 ${
+                    selected
+                      ? 'bg-veil text-white'
+                      : 'bg-black/[0.05] text-ink-soft hover:bg-black/[0.08]'
+                  }`}
+                >
+                  {entry.symbol}
+                </button>
+              )
+            })}
+          </div>
 
-      {/* Amount */}
-      <div className="mt-5">
-        <label className="eyebrow" htmlFor="shield-amount">
-          Amount
-        </label>
-        <div className="mt-2 flex items-center gap-2 rounded-xl border border-rule bg-paper-raised px-4 focus-within:border-veil-mid">
-          <input
-            id="shield-amount"
-            inputMode="decimal"
-            placeholder="0.00"
-            value={amount}
-            onChange={(event) => setAmount(event.target.value.replace(/[^0-9.]/g, ''))}
-            className="tabular h-12 flex-1 bg-transparent font-mono text-[15px] outline-none placeholder:text-ink-faint"
-          />
-          <span className="text-[13px] font-medium text-ink-muted">{token.symbol}</span>
-        </div>
-
-        <p className="mt-2 text-[12px] leading-snug text-ink-faint text-pretty">
-          Round numbers are the easiest thing to fingerprint. Aether splits amounts for you once a
-          strategy is running, but for the initial deposit prefer something irregular over{' '}
-          <span className="font-mono">1000</span>.
-        </p>
-      </div>
-
-      {/* Fee */}
-      <div className="mt-5 rounded-lg border border-rule bg-paper-sunk/60 px-4 py-3">
-        <div className="flex items-baseline justify-between gap-3">
-          <span className="text-[12.5px] text-ink-muted">Pool fee per private operation</span>
-          <span className="tabular font-mono text-[13px] font-medium">
-            {fee ? `${formatUnits(fee.fee, 18, 2)} STRK` : '…'}
-          </span>
-        </div>
-        <p className="mt-1.5 text-[11.5px] leading-snug text-ink-faint text-pretty">
-          {fee?.live
-            ? 'Read live from the pool. Gas is sponsored by the wallet; this fee is not.'
-            : 'Could not reach the RPC — showing the last known value. Verify before a large deposit.'}
-        </p>
-      </div>
-
-      {/* What will happen */}
-      {preview.length > 0 && (
-        <div className="mt-5">
-          <p className="eyebrow">This will submit</p>
-          <ol className="mt-2 space-y-1.5">
-            {preview.map((line, index) => (
-              <li key={line} className="flex gap-2.5 text-[12.5px] text-ink-muted">
-                <span className="font-mono text-ink-faint">{index + 1}.</span>
-                <span className="text-pretty">{line}</span>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-3 rounded-lg border border-rule bg-paper-sunk/60 px-3.5 py-2.5 text-[12px] leading-snug text-ink-muted text-pretty">
-            <span className="font-medium text-ink">Your wallet will prompt twice.</span> The ERC-20
-            approval has to land on-chain before the deposit itself. The second prompt is expected,
-            not a duplicate.
+          {/* Amount */}
+          <p className="list-header mt-5">Amount</p>
+          <div className="mt-2 flex items-center gap-2 rounded-xl bg-black/[0.04] px-4 transition-shadow focus-within:ring-2 focus-within:ring-veil/50">
+            <input
+              inputMode="decimal"
+              aria-label={`Amount of ${token.symbol} to shield`}
+              placeholder="0.00"
+              value={amount}
+              onChange={(event) => setAmount(event.target.value.replace(/[^0-9.]/g, ''))}
+              className="tabular h-11 flex-1 bg-transparent font-mono text-[15px] outline-none placeholder:text-ink-faint"
+            />
+            <span className="text-[13px] font-semibold text-ink-muted">{token.symbol}</span>
+          </div>
+          <p className="mt-2 text-[11.5px] leading-snug text-ink-faint text-pretty">
+            Round numbers are the easiest thing to fingerprint — prefer something irregular over{' '}
+            <span className="font-mono">1000</span>.
           </p>
-        </div>
-      )}
 
-      {/* Action */}
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <Button onClick={submit} disabled={!canSubmit}>
-          {phase === 'awaiting-wallet'
-            ? 'Confirm in your wallet…'
-            : phase === 'building'
-              ? 'Preparing…'
-              : 'Shield'}
-        </Button>
-        {address && <Hex value={address} chars={4} />}
-      </div>
-
-      {/* Result */}
-      {txHash && (
-        <div className="mt-5 rounded-lg border border-good/25 bg-good-soft px-4 py-3">
-          <p className="text-[13px] font-medium text-good">Submitted to mainnet</p>
-          <p className="mt-1.5 text-[12.5px] leading-snug text-ink-muted text-pretty">
-            Notes take roughly 10 blocks to mature before they can be spent.
-          </p>
-          <div className="mt-2.5 flex flex-wrap items-center gap-3">
-            <Hex value={txHash} href={explorerTx(txHash)} chars={8} />
-            <button
-              onClick={() => navigator.clipboard?.writeText(txHash)}
-              className="text-[12px] font-medium text-veil hover:underline underline-offset-2"
-            >
-              Copy hash for strk20.json
-            </button>
+          {/* Fee */}
+          <div className="mt-4 rounded-xl bg-paper-sunk px-4 py-3">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-[12.5px] text-ink-muted">Pool fee per private operation</span>
+              <span className="tabular font-mono text-[13px] font-semibold">
+                {fee ? `${formatUnits(fee.fee, 18, 2)} STRK` : '…'}
+              </span>
+            </div>
+            <p className="mt-1 text-[11px] leading-snug text-ink-faint text-pretty">
+              {fee?.live
+                ? 'Read live from the pool. Gas is sponsored by the wallet; this fee is not.'
+                : 'RPC unreachable — showing the last known value. Verify before a large deposit.'}
+            </p>
           </div>
         </div>
-      )}
 
-      {error && (
-        <div className="mt-5 rounded-lg border border-exposed-mid/50 bg-exposed-soft px-4 py-3">
-          <p className="text-[13px] leading-snug text-exposed text-pretty">{error}</p>
+        <div className="flex flex-col">
+          {/* What will happen */}
+          <p className="list-header">This will submit</p>
+          {preview.length > 0 ? (
+            <ol className="mt-2 space-y-1.5">
+              {preview.map((line, index) => (
+                <li key={line} className="flex gap-2 text-[12.5px] text-ink-muted">
+                  <span className="font-mono text-ink-faint">{index + 1}.</span>
+                  <span className="text-pretty">{line}</span>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="mt-2 text-[12.5px] text-ink-faint">Enter an amount to preview.</p>
+          )}
+
+          <div className="mt-3 rounded-xl bg-paper-sunk px-3.5 py-2.5">
+            <p className="text-[12px] leading-snug text-ink-muted text-pretty">
+              <span className="font-semibold text-ink">Your wallet will prompt twice.</span> The
+              ERC-20 approval must land before the deposit. The second prompt is expected, not a
+              duplicate.
+            </p>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Button onClick={submit} disabled={!canSubmit}>
+              {phase === 'awaiting-wallet'
+                ? 'Confirm in your wallet…'
+                : phase === 'building'
+                  ? 'Preparing…'
+                  : 'Shield'}
+            </Button>
+            {address && <Hex value={address} chars={4} />}
+          </div>
+
+          {txHash && (
+            <div className="mt-4 rounded-xl bg-good-soft px-4 py-3">
+              <p className="text-[13px] font-semibold text-good">Submitted to mainnet</p>
+              <p className="mt-1 text-[12px] leading-snug text-ink-muted text-pretty">
+                Notes take ~10 blocks to mature before they can be spent.
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <Hex value={txHash} href={explorerTx(txHash)} chars={8} />
+                <button
+                  onClick={() => navigator.clipboard?.writeText(txHash)}
+                  className="text-[12px] font-semibold text-veil hover:underline underline-offset-2"
+                >
+                  Copy hash for strk20.json
+                </button>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="mt-4 rounded-xl bg-exposed-soft px-4 py-3">
+              <p className="text-[13px] leading-snug text-exposed text-pretty">{error}</p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </section>
   )
 }

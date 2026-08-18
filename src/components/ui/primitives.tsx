@@ -4,7 +4,7 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useReveal } from '@/lib/hooks/use-motion'
 
-/** Wraps children in a scroll-triggered reveal. `delay` staggers siblings. */
+/** Scroll-triggered reveal. Small and fast — motion is seasoning, not the meal. */
 export function Reveal({
   children,
   delay = 0,
@@ -36,7 +36,7 @@ export function Eyebrow({ children }: { children: ReactNode }) {
   return <p className="eyebrow">{children}</p>
 }
 
-/** Page gutter. Every section shares it so nothing drifts out of alignment. */
+/** Shared page gutter. */
 export function Container({
   children,
   className = '',
@@ -45,7 +45,7 @@ export function Container({
   className?: string
 }) {
   return (
-    <div className={`mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-10 ${className}`}>{children}</div>
+    <div className={`mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10 ${className}`}>{children}</div>
   )
 }
 
@@ -69,19 +69,18 @@ export function Button({
   disabled?: boolean
 }) {
   const sizes = {
-    sm: 'h-9 px-4 text-[13px]',
-    md: 'h-11 px-5 text-sm',
-    lg: 'h-13 px-7 text-[15px]',
+    sm: 'h-8 px-3.5 text-[13px]',
+    md: 'h-10 px-4.5 text-[14px]',
+    lg: 'h-11 px-5 text-[15px]',
   }
 
   const variants = {
-    primary:
-      'bg-ink text-paper hover:bg-ink-soft shadow-[0_1px_2px_rgba(20,21,15,0.14),0_8px_20px_-10px_rgba(20,21,15,0.4)]',
-    secondary: 'bg-paper-raised text-ink border border-rule-strong hover:border-ink-faint hover:bg-paper-sunk',
-    ghost: 'text-ink-soft hover:text-ink hover:bg-paper-sunk',
+    primary: 'bg-veil text-white hover:bg-veil-deep',
+    secondary: 'bg-black/[0.05] text-ink hover:bg-black/[0.08]',
+    ghost: 'text-ink-soft hover:bg-black/[0.05] hover:text-ink',
   }
 
-  const classes = `inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 active:scale-[0.985] disabled:pointer-events-none disabled:opacity-45 ${sizes[size]} ${variants[variant]} ${className}`
+  const classes = `inline-flex items-center justify-center gap-1.5 rounded-full font-medium transition-all duration-150 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 ${sizes[size]} ${variants[variant]} ${className}`
 
   if (href) {
     const external = href.startsWith('http')
@@ -106,7 +105,7 @@ export function Button({
   )
 }
 
-/** Private / public state chip. The two states must never look alike. */
+/** iOS-style tinted state chip. Private and public must never look alike. */
 export function StateBadge({
   state,
   children,
@@ -115,21 +114,63 @@ export function StateBadge({
   children: ReactNode
 }) {
   const styles = {
-    private: 'bg-veil-soft text-veil-deep border-veil-mid/45',
-    public: 'bg-exposed-soft text-exposed border-exposed-mid/50',
-    good: 'bg-good-soft text-good border-good/25',
-    neutral: 'bg-paper-sunk text-ink-muted border-rule-strong',
+    private: 'bg-veil-soft text-veil-deep',
+    public: 'bg-exposed-soft text-exposed',
+    good: 'bg-good-soft text-good',
+    neutral: 'bg-black/[0.05] text-ink-muted',
   }
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium tracking-wide ${styles[state]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-semibold ${styles[state]}`}
     >
       {children}
     </span>
   )
 }
 
-/** Truncated hex with a copy affordance, for addresses and tx hashes. */
+/** iOS segmented control. */
+export function Segmented<T extends string>({
+  options,
+  value,
+  onChange,
+  className = '',
+  ariaLabel,
+}: {
+  options: { value: T; label: string }[]
+  value: T
+  onChange: (value: T) => void
+  className?: string
+  ariaLabel?: string
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label={ariaLabel}
+      className={`inline-flex flex-wrap gap-0.5 rounded-[10px] bg-black/[0.05] p-0.5 ${className}`}
+    >
+      {options.map((option) => {
+        const selected = option.value === value
+        return (
+          <button
+            key={option.value}
+            role="tab"
+            aria-selected={selected}
+            onClick={() => onChange(option.value)}
+            className={`h-8 rounded-[8px] px-3 text-[13px] font-medium transition-all duration-150 ${
+              selected
+                ? 'bg-white text-ink shadow-[0_1px_4px_rgba(0,0,0,0.12)]'
+                : 'text-ink-muted hover:text-ink'
+            }`}
+          >
+            {option.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Truncated hex with optional explorer link. */
 export function Hex({
   value,
   href,
@@ -139,13 +180,10 @@ export function Hex({
   href?: string
   chars?: number
 }) {
-  const short = value.length > chars * 2 + 2
-    ? `${value.slice(0, chars + 2)}…${value.slice(-chars)}`
-    : value
+  const short =
+    value.length > chars * 2 + 2 ? `${value.slice(0, chars + 2)}…${value.slice(-chars)}` : value
 
-  const body = (
-    <code className="font-mono text-[12.5px] tracking-tight text-ink-muted">{short}</code>
-  )
+  const body = <code className="font-mono text-[12px] tracking-tight text-ink-muted">{short}</code>
 
   if (href) {
     return (
@@ -179,14 +217,29 @@ export function SectionHeading({
       <Reveal>
         <Eyebrow>{eyebrow}</Eyebrow>
       </Reveal>
-      <Reveal delay={80}>
-        <h2 className="display-md mt-4 text-balance">{title}</h2>
+      <Reveal delay={60}>
+        <h2 className="display-lg mt-2.5 text-balance">{title}</h2>
       </Reveal>
       {lede ? (
-        <Reveal delay={150}>
-          <p className="mt-5 text-[17px] leading-relaxed text-ink-muted text-pretty">{lede}</p>
+        <Reveal delay={120}>
+          <p className="mt-4 text-[16px] leading-relaxed text-ink-muted text-pretty sm:text-[17px]">
+            {lede}
+          </p>
         </Reveal>
       ) : null}
     </div>
+  )
+}
+
+/** The mark: a small squircle, app-icon style. */
+export function AetherMark({ size = 26 }: { size?: number }) {
+  return (
+    <span
+      className="veil-gradient relative grid place-items-center rounded-[30%]"
+      style={{ width: size, height: size }}
+      aria-hidden="true"
+    >
+      <span className="absolute rounded-full bg-white/95" style={{ width: size * 0.32, height: size * 0.32 }} />
+    </span>
   )
 }

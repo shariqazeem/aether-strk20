@@ -1,54 +1,53 @@
 @import 'tailwindcss';
 
 /*
-  Aether design system.
+  Aether design system — iOS-grade minimal.
 
-  The product is about things that are present but unseen. The surface should
-  feel like light on paper — warm, quiet, high-contrast where it matters and
-  almost nothing everywhere else. Colour is spent only on meaning: indigo for
-  what is private, amber for what is public.
+  Cool neutrals, hairline rules, one accent. Type is a single sans family used
+  with tight tracking and real weights; numbers are always tabular. Nothing
+  decorative: every colour states private/public/ok, every surface is white or
+  the system gray, every division is a hairline.
 */
 
 @theme {
-  /* Paper — warm off-whites, never pure #fff */
-  --color-paper: #fbfbf8;
+  /* Surfaces */
+  --color-paper: #ffffff;
   --color-paper-raised: #ffffff;
-  --color-paper-sunk: #f4f4f0;
-  --color-paper-deep: #ecece6;
+  --color-paper-sunk: #f5f5f7;
+  --color-paper-deep: #e8e8ed;
 
-  /* Ink */
-  --color-ink: #14150f;
-  --color-ink-soft: #3d3f36;
-  --color-ink-muted: #74766a;
-  --color-ink-faint: #a4a69a;
+  /* Text */
+  --color-ink: #1d1d1f;
+  --color-ink-soft: #3a3a3c;
+  --color-ink-muted: #6e6e73;
+  --color-ink-faint: #aeaeb2;
 
-  /* Lines */
-  --color-rule: #e4e4dc;
-  --color-rule-strong: #d2d2c8;
+  /* Hairlines */
+  --color-rule: rgba(0, 0, 0, 0.08);
+  --color-rule-strong: rgba(0, 0, 0, 0.16);
 
-  /* Private — the shielded state */
-  --color-veil: #4f46e5;
-  --color-veil-soft: #eef0ff;
-  --color-veil-mid: #a5aaf5;
-  --color-veil-deep: #312a9e;
+  /* Accent — the private state */
+  --color-veil: #5e5ce6;
+  --color-veil-soft: #eeeefd;
+  --color-veil-mid: #b9b8f5;
+  --color-veil-deep: #3c3aae;
 
-  /* Public — the exposed state */
-  --color-exposed: #c2610a;
+  /* The public state */
+  --color-exposed: #9a5200;
   --color-exposed-soft: #fdf1e3;
-  --color-exposed-mid: #f0b878;
+  --color-exposed-mid: #f2c48d;
 
   /* Signal */
-  --color-good: #16794a;
-  --color-good-soft: #e8f5ee;
-  --color-warn: #a8360b;
+  --color-good: #1e7c36;
+  --color-good-soft: #eaf6ee;
+  --color-warn: #d70015;
 
-  --font-display: var(--font-instrument), ui-serif, Georgia, serif;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'SF Pro Text', ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, 'SF Mono', Menlo, monospace;
 
-  --radius-card: 14px;
+  --radius-card: 18px;
 
-  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 @layer base {
@@ -66,11 +65,11 @@
     background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
+    font-feature-settings: 'cv05', 'cv11', 'ss01';
     overflow-x: hidden;
   }
 
-  /* Numbers must never jitter while animating. */
+  /* Numbers never jitter. */
   .tabular {
     font-variant-numeric: tabular-nums;
   }
@@ -83,82 +82,57 @@
   :focus-visible {
     outline: 2px solid var(--color-veil);
     outline-offset: 2px;
-    border-radius: 3px;
+    border-radius: 4px;
   }
 }
 
 @layer utilities {
-  .font-display {
-    font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.015em;
-  }
-
-  /* Editorial display sizing — fluid, tight, cinematic. */
-  /* Capped so the hero's call to action still clears the fold on a 900px laptop. */
+  /* Display type — same family, tighter and heavier. Never decorative. */
   .display-xl {
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 8.2vw, 6.75rem);
-    line-height: 0.94;
-    letter-spacing: -0.032em;
+    font-size: clamp(2.5rem, 5.6vw, 4.25rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    font-weight: 650;
   }
 
   .display-lg {
-    font-family: var(--font-display);
-    font-size: clamp(2.4rem, 6.4vw, 5.2rem);
-    line-height: 0.96;
-    letter-spacing: -0.028em;
+    font-size: clamp(1.9rem, 4vw, 2.85rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    font-weight: 650;
   }
 
   .display-md {
-    font-family: var(--font-display);
-    font-size: clamp(1.9rem, 4vw, 3.1rem);
-    line-height: 1.04;
-    letter-spacing: -0.022em;
+    font-size: clamp(1.45rem, 2.6vw, 2rem);
+    line-height: 1.14;
+    letter-spacing: -0.025em;
+    font-weight: 630;
   }
 
+  /* Apple-style eyebrow: coloured, semibold, sentence case. */
   .eyebrow {
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.16em;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--color-veil);
+  }
+
+  /* Grouped-list section header, iOS Settings style. */
+  .list-header {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-ink-faint);
+    color: var(--color-ink-muted);
   }
 
-  .rule-grid {
-    background-image:
-      linear-gradient(to right, var(--color-rule) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--color-rule) 1px, transparent 1px);
-    background-size: 64px 64px;
-  }
-
-  /* The luminous wash behind the hero — aether itself. */
-  .aether-wash {
-    background:
-      radial-gradient(ellipse 80% 55% at 50% -10%, rgba(79, 70, 229, 0.11), transparent 62%),
-      radial-gradient(ellipse 62% 45% at 88% 12%, rgba(120, 180, 255, 0.13), transparent 66%),
-      radial-gradient(ellipse 55% 42% at 8% 32%, rgba(230, 190, 255, 0.11), transparent 64%);
-  }
-
-  .veil-gradient {
-    background: linear-gradient(135deg, var(--color-veil) 0%, #6f6ae8 45%, #55b6e8 100%);
-  }
-
-  .text-veil-gradient {
-    background: linear-gradient(120deg, var(--color-veil-deep), var(--color-veil) 42%, #3f9fd4 88%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  /* Cards: barely-there elevation. Light theme dies from heavy shadows. */
   .card {
     background: var(--color-paper-raised);
     border: 1px solid var(--color-rule);
     border-radius: var(--radius-card);
     box-shadow:
-      0 1px 2px rgba(20, 21, 15, 0.03),
-      0 6px 18px -10px rgba(20, 21, 15, 0.09);
+      0 1px 2px rgba(0, 0, 0, 0.03),
+      0 4px 16px rgba(0, 0, 0, 0.04);
   }
 
   .card-flat {
@@ -167,13 +141,37 @@
     border-radius: var(--radius-card);
   }
 
-  /* Scroll reveal. Paired with useReveal(). */
+  /* The hero mockup's lift. Used once. */
+  .shadow-stage {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 24px 70px -18px rgba(29, 29, 31, 0.18);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  .veil-gradient {
+    background: linear-gradient(135deg, #6a68ee 0%, var(--color-veil) 60%, #4f4dd6 100%);
+  }
+
+  /* Whisper of tint behind the hero. Barely there. */
+  .hero-wash {
+    background:
+      radial-gradient(58% 42% at 50% 0%, rgba(94, 92, 230, 0.06), transparent 70%),
+      radial-gradient(40% 30% at 82% 8%, rgba(94, 92, 230, 0.04), transparent 65%);
+  }
+
+  /* Scroll reveal — small, fast, restrained. */
   .reveal {
     opacity: 0;
-    transform: translateY(22px);
+    transform: translateY(8px);
     transition:
-      opacity 0.85s var(--ease-cinematic),
-      transform 0.85s var(--ease-cinematic);
+      opacity 0.5s var(--ease-out-quart),
+      transform 0.5s var(--ease-out-quart);
     transition-delay: var(--reveal-delay, 0ms);
   }
 
@@ -184,18 +182,15 @@
 
   .reveal-blur {
     opacity: 0;
-    filter: blur(9px);
-    transform: translateY(14px) scale(0.995);
+    transform: translateY(10px);
     transition:
-      opacity 1.05s var(--ease-cinematic),
-      filter 1.05s var(--ease-cinematic),
-      transform 1.05s var(--ease-cinematic);
+      opacity 0.6s var(--ease-out-quart),
+      transform 0.6s var(--ease-out-quart);
     transition-delay: var(--reveal-delay, 0ms);
   }
 
   .reveal-blur[data-shown='true'] {
     opacity: 1;
-    filter: blur(0);
     transform: none;
   }
 
@@ -205,17 +200,6 @@
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
-  }
-
-  .dash-flow {
-    stroke-dasharray: 5 7;
-    animation: dash-flow 1.1s linear infinite;
-  }
-
-  @keyframes dash-flow {
-    to {
-      stroke-dashoffset: -12;
-    }
   }
 
   .shimmer {
@@ -234,25 +218,8 @@
       background-position: -220% 0;
     }
   }
-
-  @keyframes breathe {
-    0%,
-    100% {
-      opacity: 0.55;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1.06);
-    }
-  }
-
-  .breathe {
-    animation: breathe 3.4s ease-in-out infinite;
-  }
 }
 
-/* Motion is decoration here — never the only carrier of meaning. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -270,6 +237,5 @@
   .reveal-blur {
     opacity: 1 !important;
     transform: none !important;
-    filter: none !important;
   }
 }
