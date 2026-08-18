@@ -114,22 +114,39 @@ owns all of it.
 User wallet (Ready / Xverse)
         │  WalletAccountV6
         ▼
-┌──────────────────────────────────────────────┐
-│  Aether frontend — Next.js 15, TS, Tailwind  │
-├──────────────────────────────────────────────┤
-│  Privacy policy + strategy engine            │
-│  pure, deterministic, seeded, unit-tested    │
-├──────────────────────────────────────────────┤
-│  Execution layer — STRK20_ACTION[] builders  │
-└──────────────────────────────────────────────┘
-        │  strk20InvokeTransaction
+┌──────────────────────────────────────────────────────────┐
+│  Aether frontend — Next.js 15, TS strict, Tailwind       │
+│  Overview · Plan · Activity · Disclose                   │
+├──────────────────────────────────────────────────────────┤
+│  Privacy policy + strategy engine                        │
+│  pure, deterministic, seeded — 114 tests                 │
+├──────────────────────────────────────────────────────────┤
+│  Local action ledger (browser only)                      │
+│  the behavioural history a chain deliberately can't hold │
+├──────────────────────────────────────────────────────────┤
+│  Execution — STRK20_ACTION builders · AVNU private swaps │
+│  assertNeverUnshields() before every signature           │
+└──────────────────────────────────────────────────────────┘
+        │  strk20InvokeTransaction / executePrivateSwap
         ▼
-  Live STRK20 pool · AVNU private swaps · Vesu / Ekubo anonymizers
+  Live STRK20 pool · AVNU executor · relayer
 ```
 
 The engine is pure TypeScript with no `Math.random()` and no ambient clock —
-every function takes its seed and `now` as parameters, so a plan is
-reproducible and testable.
+seed and `now` are parameters, so a plan is reproducible and the hard
+constraints are testable. Plans are seeded per address per day: regenerate all
+you like, the recommendation holds still for a day.
+
+**The local ledger** records every action Aether executes, beside what a chain
+observer saw of it. It exists only in your browser: the behavioural terms of
+the privacy score need a history, and the chain refusing to hold that history
+is precisely the product working. Clearing it resets those terms.
+
+**Selective disclosure** builds canonical statement JSON (balance threshold,
+strategy return, non-interaction with an address set) and is explicit about
+the boundary: Wallet API 0.10.3 exposes no statement-proof method, so Aether
+prepares the statement today and requests the proof when wallets ship support.
+No signature theatre in the meantime.
 
 ### Live mainnet addresses
 
