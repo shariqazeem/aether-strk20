@@ -71,12 +71,13 @@ export function OpeningScene() {
               STRK20 · Starknet mainnet
             </p>
             <h1 className="display-xl mt-6 text-balance">
-              Shield once.
+              Shielded isn&rsquo;t
               <br />
-              <span className="text-ink-faint">Stay unseen.</span>
+              <span className="text-ink-faint">private.</span>
             </h1>
-            <p className="mt-6 max-w-md text-[17px] leading-relaxed text-ink-muted text-pretty">
-              A private portfolio engine that never leaves the pool.
+            <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-ink-muted text-pretty">
+              The pool gives you an anonymity set. Your behaviour spends it. Aether runs the real
+              deanonymization attacks against your own footprint — then closes every leak it finds.
             </p>
             <div className="mt-8 flex items-center gap-2.5">
               <Button href="/app" size="lg">
@@ -115,16 +116,16 @@ export function OpeningScene() {
 
 const CALLOUTS = [
   {
-    title: 'A score you can audit.',
-    body: 'Five weighted terms, computed client-side from live pool data and your own history. The formula ships in the README.',
+    title: 'The attack runs first.',
+    body: 'Amount correlation, timing windows, round numbers, cadence, thin anonymity sets — the heuristics that deanonymized pool users are run against your real footprint before anything else.',
   },
   {
-    title: 'Windows, not schedules.',
-    body: 'Every action is sized to blend with pool activity and timed to kill your cadence. Clockwork is a fingerprint.',
+    title: 'Every leak names its fix.',
+    body: 'A finding is not a warning. It carries the exact remedy — the mode, the sizing, the window — and hands it to the planner ready to execute.',
   },
   {
-    title: 'Observers see almost nothing.',
-    body: 'Swaps surface an executor hop. Rebalances surface nothing at all. Your address appears exactly once — at the deposit.',
+    title: 'Then it re-attacks.',
+    body: 'Act on the plan and the adversary runs again over your new footprint. The loop closes only when it stops finding you.',
   },
 ]
 
@@ -199,13 +200,13 @@ function StaticOpening({ className = '' }: { className?: string }) {
           STRK20 · Starknet mainnet
         </p>
         <h1 className="display-xl mt-5">
-          Shield once.
+          Shielded isn&rsquo;t
           <br />
-          <span className="text-ink-faint">Stay unseen.</span>
+          <span className="text-ink-faint">private.</span>
         </h1>
         <p className="mt-5 max-w-md text-[16.5px] leading-relaxed text-ink-muted text-pretty">
-          A private portfolio engine. Swaps, DCA and rebalancing run entirely inside the STRK20
-          pool — sized and timed so your behaviour never becomes a fingerprint.
+          The pool gives you an anonymity set. Your behaviour spends it. Aether runs the real
+          deanonymization attacks against your own footprint — then closes every leak it finds.
         </p>
         <div className="mt-7 flex flex-wrap items-center gap-2.5">
           <Button href="/app" size="lg">
