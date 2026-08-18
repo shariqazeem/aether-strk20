@@ -128,8 +128,8 @@ export function DisclosePanel() {
                       onClick={() => setAsset(token.symbol)}
                       className={`h-8 rounded-full px-3 text-[12.5px] font-medium transition-all ${
                         asset === token.symbol
-                          ? 'bg-veil text-white'
-                          : 'bg-black/[0.05] text-ink-soft hover:bg-black/[0.08]'
+                          ? 'bg-ink text-paper-raised'
+                          : 'bg-ink/[0.05] text-ink-soft hover:bg-ink/[0.08]'
                       }`}
                     >
                       {token.symbol}
@@ -144,7 +144,7 @@ export function DisclosePanel() {
                   inputMode="decimal"
                   onChange={(event) => setThreshold(event.target.value.replace(/[^0-9.]/g, ''))}
                   aria-label="Balance threshold"
-                  className="tabular mt-2 h-10 w-full rounded-xl bg-black/[0.04] px-3.5 font-mono text-[14px] outline-none focus:ring-2 focus:ring-veil/50"
+                  className="tabular mt-2 h-10 w-full rounded-xl bg-ink/[0.04] px-3.5 font-mono text-[14px] outline-none focus:ring-2 focus:ring-ink/40"
                 />
               </div>
             </>
@@ -158,7 +158,7 @@ export function DisclosePanel() {
                 value={sinceDate}
                 onChange={(event) => setSinceDate(event.target.value)}
                 aria-label="Return period start"
-                className="tabular mt-2 h-10 w-full rounded-xl bg-black/[0.04] px-3.5 font-mono text-[14px] outline-none focus:ring-2 focus:ring-veil/50"
+                className="tabular mt-2 h-10 w-full rounded-xl bg-ink/[0.04] px-3.5 font-mono text-[14px] outline-none focus:ring-2 focus:ring-ink/40"
               />
             </div>
           )}
@@ -172,7 +172,7 @@ export function DisclosePanel() {
                 placeholder="0x…, 0x… — comma or newline separated"
                 aria-label="Address set"
                 rows={3}
-                className="mt-2 w-full rounded-xl bg-black/[0.04] px-3.5 py-2.5 font-mono text-[12.5px] outline-none placeholder:text-ink-faint focus:ring-2 focus:ring-veil/50"
+                className="mt-2 w-full rounded-xl bg-ink/[0.04] px-3.5 py-2.5 font-mono text-[12.5px] outline-none placeholder:text-ink-faint focus:ring-2 focus:ring-ink/40"
               />
             </div>
           )}

@@ -89,7 +89,7 @@ export function ActivityPanel() {
                       entry.observer === '—'
                         ? 'text-ink-faint'
                         : entry.observer.includes('public')
-                          ? 'text-exposed'
+                          ? 'text-ember'
                           : 'text-ink-muted'
                     }`}
                   >

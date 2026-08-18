@@ -71,9 +71,9 @@ export function Button({
   }
 
   const variants = {
-    primary: 'bg-ink text-white hover:bg-ink-soft',
-    secondary: 'bg-black/[0.05] text-ink hover:bg-black/[0.08]',
-    ghost: 'text-ink-soft hover:bg-black/[0.05] hover:text-ink',
+    primary: 'bg-ink text-paper-raised hover:bg-ink-soft',
+    secondary: 'bg-ink/[0.05] text-ink hover:bg-ink/[0.08]',
+    ghost: 'text-ink-soft hover:bg-ink/[0.05] hover:text-ink',
   }
 
   const classes = `inline-flex items-center justify-center gap-1.5 rounded-full font-medium transition-all duration-150 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 ${sizes[size]} ${variants[variant]} ${className}`
@@ -101,7 +101,13 @@ export function Button({
   )
 }
 
-/** iOS-style tinted state chip. Private and public must never look alike. */
+/**
+ * State chip. Sealed and seen must never look alike.
+ *
+ * `private` is solid ink — the sealed state, colourless and absolute.
+ * `public` is the only chip that carries the ember accent, because being
+ * observed is the only thing in this interface that gets a colour.
+ */
 export function StateBadge({
   state,
   children,
@@ -110,10 +116,10 @@ export function StateBadge({
   children: ReactNode
 }) {
   const styles = {
-    private: 'bg-veil-soft text-veil-deep',
-    public: 'bg-exposed-soft text-exposed',
-    good: 'bg-good-soft text-good',
-    neutral: 'bg-black/[0.05] text-ink-muted',
+    private: 'bg-ink text-paper-raised',
+    public: 'bg-ember-soft text-ember',
+    good: 'bg-ink/[0.07] text-ink-soft',
+    neutral: 'bg-ink/[0.05] text-ink-muted',
   }
   return (
     <span
@@ -142,7 +148,7 @@ export function Segmented<T extends string>({
     <div
       role="tablist"
       aria-label={ariaLabel}
-      className={`inline-flex flex-wrap gap-0.5 rounded-[10px] bg-black/[0.05] p-0.5 ${className}`}
+      className={`inline-flex flex-wrap gap-0.5 rounded-[10px] bg-ink/[0.05] p-0.5 ${className}`}
     >
       {options.map((option) => {
         const selected = option.value === value
@@ -154,7 +160,7 @@ export function Segmented<T extends string>({
             onClick={() => onChange(option.value)}
             className={`h-8 rounded-[8px] px-3 text-[13px] font-medium transition-all duration-150 ${
               selected
-                ? 'bg-white text-ink shadow-[0_1px_4px_rgba(0,0,0,0.12)]'
+                ? 'bg-paper-raised text-ink shadow-[0_1px_4px_rgba(0,0,0,0.12)]'
                 : 'text-ink-muted hover:text-ink'
             }`}
           >
@@ -187,7 +193,7 @@ export function Hex({
         href={href}
         target="_blank"
         rel="noreferrer noopener"
-        className="rounded transition-colors hover:text-veil hover:underline underline-offset-2"
+        className="rounded transition-colors hover:text-ink hover:underline underline-offset-2"
       >
         {body}
       </a>
@@ -234,11 +240,11 @@ export function SectionIndex({
 export function AetherMark({ size = 26 }: { size?: number }) {
   return (
     <span
-      className="veil-gradient relative grid place-items-center rounded-[30%]"
+      className="bg-ink relative grid place-items-center rounded-[30%]"
       style={{ width: size, height: size }}
       aria-hidden="true"
     >
-      <span className="absolute rounded-full bg-white/95" style={{ width: size * 0.32, height: size * 0.32 }} />
+      <span className="absolute rounded-full bg-paper-raised" style={{ width: size * 0.32, height: size * 0.32 }} />
     </span>
   )
 }

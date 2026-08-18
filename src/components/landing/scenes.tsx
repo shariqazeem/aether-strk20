@@ -67,7 +67,7 @@ export function OpeningScene() {
             }}
           >
             <p className="mono-label flex items-center gap-2">
-              <span className="pulse-dot size-1.5 rounded-full bg-good" />
+              <span className="pulse-dot size-1.5 rounded-full bg-ink" />
               STRK20 · Starknet mainnet
             </p>
             <h1 className="display-xl mt-6 text-balance">
@@ -195,7 +195,7 @@ function StaticOpening({ className = '' }: { className?: string }) {
     <section className={className}>
       <div className="mx-auto w-full max-w-6xl px-5 pt-16 pb-6 sm:px-8">
         <p className="mono-label flex items-center gap-2">
-          <span className="pulse-dot size-1.5 rounded-full bg-good" />
+          <span className="pulse-dot size-1.5 rounded-full bg-ink" />
           STRK20 · Starknet mainnet
         </p>
         <h1 className="display-xl mt-5">

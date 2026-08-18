@@ -112,7 +112,7 @@ export function PlanPanel() {
                   value={privacyFloor}
                   onChange={(event) => setPrivacyFloor(Number(event.target.value))}
                   aria-label="Privacy floor"
-                  className="mt-2.5 w-full accent-[var(--color-veil)]"
+                  className="mt-2.5 w-full accent-[var(--color-ink)]"
                 />
                 <p className="mt-1 text-[11px] leading-snug text-ink-faint">
                   The engine refuses any action that would land the score below this.
@@ -130,8 +130,8 @@ export function PlanPanel() {
                         onClick={() => setTargetAsset(token.symbol)}
                         className={`h-8 rounded-full px-3 text-[12.5px] font-medium transition-all ${
                           selected
-                            ? 'bg-veil text-white'
-                            : 'bg-black/[0.05] text-ink-soft hover:bg-black/[0.08]'
+                            ? 'bg-ink text-paper-raised'
+                            : 'bg-ink/[0.05] text-ink-soft hover:bg-ink/[0.08]'
                         }`}
                       >
                         {token.symbol}
@@ -158,14 +158,14 @@ export function PlanPanel() {
       </section>
 
       {planError && (
-        <div className="rounded-xl bg-exposed-soft px-4 py-3">
-          <p className="text-[13px] leading-snug text-exposed text-pretty">{planError}</p>
+        <div className="rounded-xl bg-ember-soft px-4 py-3">
+          <p className="text-[13px] leading-snug text-ember text-pretty">{planError}</p>
         </div>
       )}
 
       {lastTxHash && (
-        <div className="rounded-xl bg-good-soft px-4 py-3">
-          <p className="text-[13px] font-semibold text-good">Action submitted to mainnet</p>
+        <div className="rounded-xl bg-ink/[0.06] px-4 py-3">
+          <p className="text-[13px] font-semibold text-ink-soft">Action submitted to mainnet</p>
           <div className="mt-1.5 flex flex-wrap items-center gap-3">
             <Hex value={lastTxHash} href={explorerTx(lastTxHash)} chars={8} />
             <span className="text-[11.5px] text-ink-muted">
@@ -192,7 +192,7 @@ export function PlanPanel() {
               <svg width="26" height="12" viewBox="0 0 26 12" aria-hidden="true" className="text-ink-faint">
                 <path d="M2 6h18m0 0-5-4m5 4-5 4" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="tabular text-[26px] font-semibold tracking-tight text-veil">
+              <span className="tabular text-[26px] font-semibold tracking-tight text-ink">
                 {plan.projectedScore.toFixed(1)}
               </span>
               <span className="text-[12px] text-ink-muted">
@@ -285,7 +285,7 @@ function ActivityChip({
 
   if (!live) {
     return (
-      <button onClick={onRefresh} className="font-mono text-[11px] text-exposed hover:underline">
+      <button onClick={onRefresh} className="font-mono text-[11px] text-ember hover:underline">
         pool not measured — retry
       </button>
     )

@@ -258,7 +258,7 @@ export function LiveDemo() {
       {/* Atmosphere */}
       <div className="aurora absolute -inset-10 -z-10 rounded-[40px]" />
 
-      <div className="overflow-hidden rounded-[20px] border border-rule bg-white/[0.86] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_28px_80px_-20px_rgba(23,23,26,0.25)] backdrop-blur-xl">
+      <div className="overflow-hidden rounded-[20px] border border-rule bg-paper-raised/[0.9] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_28px_80px_-20px_rgba(23,23,26,0.25)] backdrop-blur-xl">
         {/* App bar */}
         <div className="flex h-11 items-center justify-between border-b border-rule px-4">
           <div className="flex items-center gap-2">
@@ -266,11 +266,11 @@ export function LiveDemo() {
             <span className="text-[12.5px] font-semibold tracking-tight">Aether</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider text-good">
-              <span className="pulse-dot size-1.5 rounded-full bg-good" />
+            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider text-ink-soft">
+              <span className="pulse-dot size-1.5 rounded-full bg-ink" />
               LIVE
             </span>
-            <span className="rounded-full bg-black/[0.05] px-2 py-0.5 font-mono text-[10.5px] text-ink-muted">
+            <span className="rounded-full bg-ink/[0.05] px-2 py-0.5 font-mono text-[10.5px] text-ink-muted">
               0x04d2…9c1a
             </span>
           </div>
@@ -301,7 +301,7 @@ export function LiveDemo() {
                   </span>
                   <div className="h-1 flex-1 rounded-full bg-paper-deep">
                     <div
-                      className="h-full rounded-full bg-veil transition-[width] duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                      className="h-full rounded-full bg-ink transition-[width] duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                       style={{ width: `${asset.share}%` }}
                     />
                   </div>
@@ -319,16 +319,16 @@ export function LiveDemo() {
               {plan.map((row) => (
                 <li
                   key={row.title}
-                  className="rounded-lg border border-rule bg-white px-2.5 py-2"
+                  className="rounded-lg border border-rule bg-paper-raised px-2.5 py-2"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="truncate text-[11.5px] font-medium">{row.title}</span>
                     <span
                       className={`shrink-0 font-mono text-[9.5px] tracking-wider uppercase ${
                         row.status === 'executing'
-                          ? 'text-veil'
+                          ? 'text-ink'
                           : row.status === 'window'
-                            ? 'text-good'
+                            ? 'text-ink-soft'
                             : 'text-ink-faint'
                       }`}
                     >
@@ -338,7 +338,7 @@ export function LiveDemo() {
                   {row.status !== 'queued' && (
                     <div className="mt-1.5 h-0.5 overflow-hidden rounded-full bg-paper-deep">
                       <div
-                        className={`h-full rounded-full ${row.status === 'executing' ? 'bg-veil' : 'bg-good'}`}
+                        className={`h-full rounded-full ${row.status === 'executing' ? 'bg-ink' : 'bg-ink'}`}
                         style={{ width: `${Math.round(row.progress * 100)}%` }}
                       />
                     </div>
@@ -362,7 +362,7 @@ export function LiveDemo() {
                     cy="38"
                     r={radius}
                     fill="none"
-                    stroke="var(--color-veil)"
+                    stroke="var(--color-ink)"
                     strokeWidth="6"
                     strokeLinecap="round"
                     strokeDasharray={`${circumference * (score / 100)} ${circumference}`}
@@ -379,7 +379,7 @@ export function LiveDemo() {
                       {dim.label}
                     </span>
                     <div className="h-[3px] flex-1 rounded-full bg-paper-deep">
-                      <div className="h-full rounded-full bg-veil" style={{ width: `${dim.value}%` }} />
+                      <div className="h-full rounded-full bg-ink" style={{ width: `${dim.value}%` }} />
                     </div>
                     <span className="tabular w-5 shrink-0 text-right font-mono text-[9.5px] text-ink-faint">
                       {dim.value}
@@ -403,7 +403,7 @@ export function LiveDemo() {
                     </span>
                     <span
                       className={`shrink-0 font-mono text-[10px] ${
-                        entry.observer === '—' ? 'text-ink-faint' : 'text-exposed'
+                        entry.observer === '—' ? 'text-ink-faint' : 'text-ember'
                       }`}
                     >
                       {entry.observer}

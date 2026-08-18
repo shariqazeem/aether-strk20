@@ -70,10 +70,10 @@ export function scoreFromDimensions(d: ScoreDimensions): number {
 }
 
 function bandFor(score: number): { label: string; className: string } {
-  if (score >= 78) return { label: 'Strong', className: 'text-good' }
-  if (score >= 58) return { label: 'Adequate', className: 'text-veil' }
-  if (score >= 38) return { label: 'Thin', className: 'text-exposed' }
-  return { label: 'Exposed', className: 'text-warn' }
+  if (score >= 78) return { label: 'Strong', className: 'text-ink-soft' }
+  if (score >= 58) return { label: 'Adequate', className: 'text-ink' }
+  if (score >= 38) return { label: 'Thin', className: 'text-ember' }
+  return { label: 'Exposed', className: 'text-ember-deep' }
 }
 
 export function PrivacyScore({
@@ -111,7 +111,7 @@ export function PrivacyScore({
               cy="76"
               r={radius}
               fill="none"
-              stroke="var(--color-veil)"
+              stroke="var(--color-ink)"
               strokeWidth="10"
               strokeLinecap="round"
               strokeDasharray={`${filled} ${circumference}`}
@@ -150,7 +150,7 @@ export function PrivacyScore({
                         ×{meta.weight.toFixed(2)}
                       </span>
                       {meta.inverted && (
-                        <span className="rounded bg-black/[0.05] px-1.5 py-0.5 font-mono text-[9.5px] text-ink-muted">
+                        <span className="rounded bg-ink/[0.05] px-1.5 py-0.5 font-mono text-[9.5px] text-ink-muted">
                           inverted
                         </span>
                       )}
@@ -162,7 +162,7 @@ export function PrivacyScore({
 
                   <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-paper-deep">
                     <div
-                      className="h-full rounded-full bg-veil"
+                      className="h-full rounded-full bg-ink"
                       style={{
                         width: shown ? `${contributing}%` : '0%',
                         transition: `width 0.9s var(--ease-out-quart) ${160 + index * 60}ms`,

@@ -107,7 +107,7 @@ function ConnectGate() {
                 key={wallet.name}
                 onClick={() => connect(wallet)}
                 disabled={status === 'connecting'}
-                className="card flex w-full items-center gap-3.5 p-4 text-left transition-all hover:border-veil-mid disabled:opacity-60"
+                className="card flex w-full items-center gap-3.5 p-4 text-left transition-all hover:border-rule-strong disabled:opacity-60"
               >
                 {wallet.icon ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -147,8 +147,8 @@ function ConnectGate() {
       </div>
 
       {error && (
-        <div className="mt-4 rounded-xl bg-exposed-soft px-4 py-3">
-          <p className="text-[13px] leading-snug text-exposed text-pretty">{error}</p>
+        <div className="mt-4 rounded-xl bg-ember-soft px-4 py-3">
+          <p className="text-[13px] leading-snug text-ember text-pretty">{error}</p>
         </div>
       )}
     </div>
@@ -238,8 +238,8 @@ function OverviewTab() {
       )}
 
       {error && (
-        <div className="rounded-xl bg-exposed-soft px-4 py-3">
-          <p className="text-[13px] leading-snug text-exposed text-pretty">{error}</p>
+        <div className="rounded-xl bg-ember-soft px-4 py-3">
+          <p className="text-[13px] leading-snug text-ember text-pretty">{error}</p>
         </div>
       )}
 
@@ -254,7 +254,7 @@ function OverviewTab() {
                 <button
                   onClick={refreshBalances}
                   disabled={balancesLoading}
-                  className="text-[12px] font-medium text-veil hover:underline underline-offset-2 disabled:opacity-50"
+                  className="text-[12px] font-medium text-ink hover:underline underline-offset-2 disabled:opacity-50"
                 >
                   {balancesLoading ? 'Refreshing…' : 'Refresh'}
                 </button>
@@ -273,7 +273,7 @@ function OverviewTab() {
             <ul className="mt-3 divide-y divide-rule">
               {balances.map((balance) => (
                 <li key={balance.address} className="flex items-center gap-3 py-3">
-                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-black/[0.05] text-[10.5px] font-semibold text-ink-soft">
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-ink/[0.05] text-[10.5px] font-semibold text-ink-soft">
                     {balance.symbol.slice(0, 2)}
                   </span>
                   <div className="min-w-0 flex-1">

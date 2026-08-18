@@ -96,12 +96,12 @@ function ProtocolTicker() {
   const row = TICKER_ITEMS.map((item) => (
     <span key={item} className="flex shrink-0 items-center gap-10 pr-10">
       <span>{item}</span>
-      <span className="text-white/25">·</span>
+      <span className="text-paper/25">·</span>
     </span>
   ))
 
   return (
-    <div className="ticker border-y border-ink/90 bg-ink py-2.5 font-mono text-[11px] tracking-wider text-white/60">
+    <div className="ticker border-y border-ink/90 bg-ink py-2.5 font-mono text-[11px] tracking-wider text-paper/60">
       <div className="ticker-track">
         <div className="flex shrink-0">{row}</div>
         <div className="flex shrink-0" aria-hidden="true">
@@ -276,7 +276,7 @@ function ScoreVisual() {
         <div key={label} className="flex items-center gap-2.5">
           <span className="w-12 shrink-0 font-mono text-[10px] text-ink-muted">{label}</span>
           <div className="h-[3px] flex-1 rounded-full bg-paper-deep">
-            <div className="h-full rounded-full bg-veil" style={{ width: `${value}%` }} />
+            <div className="h-full rounded-full bg-ink" style={{ width: `${value}%` }} />
           </div>
           <span className="w-9 shrink-0 text-right font-mono text-[10px] text-ink-faint">
             ×{weight.toFixed(2)}
@@ -292,7 +292,7 @@ function SplitVisual() {
     <div className="space-y-1.5 font-mono text-[11px]">
       <div className="flex items-center justify-between rounded-md bg-paper-sunk px-2.5 py-1.5">
         <span className="tabular text-ink-faint line-through">1,000.00</span>
-        <span className="text-[10px] font-semibold text-exposed">fingerprint</span>
+        <span className="text-[10px] font-semibold text-ember">fingerprint</span>
       </div>
       {[
         ['1,412.77', 72],
@@ -302,7 +302,7 @@ function SplitVisual() {
         <div key={amount} className="flex items-center gap-2.5">
           <span className="tabular w-16 shrink-0">{amount}</span>
           <div className="h-[3px] flex-1 rounded-full bg-paper-deep">
-            <div className="h-full rounded-full bg-veil" style={{ width: `${width}%` }} />
+            <div className="h-full rounded-full bg-ink" style={{ width: `${width}%` }} />
           </div>
         </div>
       ))}
@@ -319,7 +319,7 @@ function TimingVisual() {
       <div>
         <div className="flex justify-between font-mono text-[9.5px] tracking-wider text-ink-faint uppercase">
           <span className="line-through">cadence</span>
-          <span className="text-exposed">detectable</span>
+          <span className="text-ember">detectable</span>
         </div>
         <svg viewBox="0 0 100 8" className="mt-1 h-3 w-full" aria-hidden="true">
           {regular.map((x) => (
@@ -330,11 +330,11 @@ function TimingVisual() {
       <div>
         <div className="flex justify-between font-mono text-[9.5px] tracking-wider text-ink-faint uppercase">
           <span>aether</span>
-          <span className="text-good">high entropy</span>
+          <span className="text-ink-soft">high entropy</span>
         </div>
         <svg viewBox="0 0 100 8" className="mt-1 h-3 w-full" aria-hidden="true">
           {irregular.map((x) => (
-            <rect key={x} x={x} y="0.5" width="1.4" height="7" rx="0.7" fill="var(--color-veil)" />
+            <rect key={x} x={x} y="0.5" width="1.4" height="7" rx="0.7" fill="var(--color-ink)" />
           ))}
         </svg>
       </div>
@@ -370,7 +370,7 @@ function ModesVisual() {
         </div>
         <div className="relative mt-1 h-[3px] rounded-full bg-paper-deep">
           <div
-            className="absolute inset-y-0 left-0 rounded-full bg-veil transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+            className="absolute inset-y-0 left-0 rounded-full bg-ink transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
             style={{ width: `${active.weight * 100}%` }}
           />
         </div>
@@ -381,7 +381,7 @@ function ModesVisual() {
 
 function GuaranteeVisual() {
   return (
-    <pre className="overflow-x-auto rounded-xl bg-ink p-3.5 font-mono text-[10.5px] leading-relaxed text-white/85">
+    <pre className="overflow-x-auto rounded-xl bg-ink p-3.5 font-mono text-[10.5px] leading-relaxed text-paper/85">
       {`assertNeverUnshields(actions)
 // withdraw to a non-helper
 // address → throws`}

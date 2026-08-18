@@ -124,8 +124,8 @@ export function ShieldPanel() {
                   onClick={() => setSymbol(entry.symbol)}
                   className={`h-8 rounded-full px-3.5 text-[13px] font-medium transition-all duration-150 ${
                     selected
-                      ? 'bg-veil text-white'
-                      : 'bg-black/[0.05] text-ink-soft hover:bg-black/[0.08]'
+                      ? 'bg-ink text-paper-raised'
+                      : 'bg-ink/[0.05] text-ink-soft hover:bg-ink/[0.08]'
                   }`}
                 >
                   {entry.symbol}
@@ -136,7 +136,7 @@ export function ShieldPanel() {
 
           {/* Amount */}
           <p className="list-header mt-5">Amount</p>
-          <div className="mt-2 flex items-center gap-2 rounded-xl bg-black/[0.04] px-4 transition-shadow focus-within:ring-2 focus-within:ring-veil/50">
+          <div className="mt-2 flex items-center gap-2 rounded-xl bg-ink/[0.04] px-4 transition-shadow focus-within:ring-2 focus-within:ring-ink/40">
             <input
               inputMode="decimal"
               aria-label={`Amount of ${token.symbol} to shield`}
@@ -204,8 +204,8 @@ export function ShieldPanel() {
           </div>
 
           {txHash && (
-            <div className="mt-4 rounded-xl bg-good-soft px-4 py-3">
-              <p className="text-[13px] font-semibold text-good">Submitted to mainnet</p>
+            <div className="mt-4 rounded-xl bg-ink/[0.06] px-4 py-3">
+              <p className="text-[13px] font-semibold text-ink-soft">Submitted to mainnet</p>
               <p className="mt-1 text-[12px] leading-snug text-ink-muted text-pretty">
                 Notes take ~10 blocks to mature before they can be spent.
               </p>
@@ -213,7 +213,7 @@ export function ShieldPanel() {
                 <Hex value={txHash} href={explorerTx(txHash)} chars={8} />
                 <button
                   onClick={() => navigator.clipboard?.writeText(txHash)}
-                  className="text-[12px] font-semibold text-veil hover:underline underline-offset-2"
+                  className="text-[12px] font-semibold text-ink hover:underline underline-offset-2"
                 >
                   Copy hash for strk20.json
                 </button>
@@ -222,8 +222,8 @@ export function ShieldPanel() {
           )}
 
           {error && (
-            <div className="mt-4 rounded-xl bg-exposed-soft px-4 py-3">
-              <p className="text-[13px] leading-snug text-exposed text-pretty">{error}</p>
+            <div className="mt-4 rounded-xl bg-ember-soft px-4 py-3">
+              <p className="text-[13px] leading-snug text-ember text-pretty">{error}</p>
             </div>
           )}
         </div>

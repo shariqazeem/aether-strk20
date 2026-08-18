@@ -116,7 +116,7 @@ export function AttackerView() {
                       <p
                         className={`truncate font-mono text-[12.5px] ${
                           row.publiclyVisible
-                            ? 'font-medium text-exposed'
+                            ? 'font-medium text-ember'
                             : row.observed === '—'
                               ? 'text-ink-faint'
                               : 'text-ink-muted'
