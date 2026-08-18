@@ -64,6 +64,24 @@ Aether execution engine
 
 ## What it does
 
+**The adversary runs first.** Seven heuristics — amount correlation, exit-minus-fee
+reconstruction, round numbers, timing windows, thin anonymity sets, repeated
+amounts, cadence — run against a target's observable footprint and report how
+linkable it is, with the evidence attached. It needs no wallet: paste any
+Starknet address at [/app](https://aether-strk20.vercel.app/app) and it runs.
+
+The contrast is asserted in tests, not claimed:
+
+| Footprint | Linkability | Band | Findings |
+|---|---|---|---|
+| Naive — round 1,000 in, same amount out 20 min later, weekly | **100** | exposed | 16 |
+| Aether-managed — non-round splits, no matching exit, irregular spacing | **0** | shielded | 0 |
+
+Same engine, same pool data. Only the behaviour differs.
+
+**Everything else follows from that.**
+
+
 - **Multi-asset private portfolio** — shielded balances across the pool's
   supported assets, never a public balance.
 - **Five strategy modes** — privacy-first, stealth DCA, whale distribution,
